@@ -1,11 +1,13 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/base/theme.dart';
 import 'package:inventoty_app/src/ui/pages/distributors/distributors-list_page.dart';
 import 'package:inventoty_app/src/ui/pages/generate_orders/generate-order_distributors.dart';
-
+import 'package:inventoty_app/src/ui/widgets/home-tile.dart';
+import 'package:inventoty_app/src/utils/const.dart';
+import '../../base/nav.dart';
+import '../../base/nav.dart';
+import 'history/history_listing.dart';
 import 'items/items-list_page.dart';
 
 class InventoryHomePage extends StatefulWidget {
@@ -17,32 +19,41 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true,title: Text("Home Page"),
+      appBar: AppBar(
+        centerTitle: true,
+        // backgroundColor: Colors.blue[800],
+        backgroundColor: Colors.white,
+        title: Image.asset("assets/images/inventory.png",scale: 2,),
+          elevation: 1,
       ),
-      body: ListView(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(10),
-        children: [
-          gridView(
-              onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => ItemsList()));
-              },
-              text: "Items",
-              imgPath: "items.jpg"),
-          gridView(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => DistributorsList()));
-              },
-              text: "Distributors",
-              imgPath: "distributors.jpeg"),
-          gridView(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => GenerateOrderDistributorsList()));
-              },
-              text: "Generate Orders",imgPath: "order.jpg"),
-        ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            HomeTile(
+              image: ItemsIcon,
+              title: 'Items',
+              onTap: ()=> AppNavigation.to(context, ItemsList()),
+            ),
+            HomeTile(
+              image: DistributorsIcon,
+              title: 'Distributors',
+              onTap: ()=> AppNavigation.to(context, DistributorsList()),
+            ),
+            HomeTile(
+              image: OrdersIcon,
+              title: 'Generate Order',
+              onTap: ()=> AppNavigation.to(context, GenerateOrderDistributorsList()),
+            ),
+            HomeTile(
+              image: HistoryIcon,
+              title: 'History',
+              onTap: ()=> AppNavigation.to(context, HistoryListing()),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -72,7 +83,8 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                     colors: [
                       Colors.red[900],
                       Colors.blue[900],
-                    ]).createShader(bounds),
+                    ]
+                ).createShader(bounds),
                 child: Text(
                   text,
                   style: GoogleFonts.quicksand(

@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/base/theme.dart';
 import 'package:inventoty_app/src/models/items-model.dart';
-import 'package:inventoty_app/src/ui/widgits/text_field.dart';
+import 'package:inventoty_app/src/ui/widgets/counter.dart';
+import 'package:inventoty_app/src/ui/widgets/date_picker_field.dart';
+import 'package:inventoty_app/src/ui/widgets/text_field.dart';
+import 'package:inventoty_app/src/utils/const.dart';
+import 'package:inventoty_app/src/utils/send-sms.dart';
+import '../../../base/nav.dart';
+import '../items/add-items_page.dart';
+import 'package:intl/intl.dart';
 
 class GenererateOrderItems extends StatefulWidget {
   @override
@@ -11,95 +16,114 @@ class GenererateOrderItems extends StatefulWidget {
 }
 
 class _GenererateOrderItemsState extends State<GenererateOrderItems> {
+  List<ItemsModel> orderItems = [];
+  DateTime orderDate = DateTime.now();
+
+
+  @override
+  void initState() {
+    super.initState();
+    orderItems = dummyItems;
+  }
+
+  String _total(){
+    double sum = 0;
+    dummyItems.where((element) => element.quantity > 0).forEach((element) {
+      sum+=element.price * element.quantity;
+    });
+    return sum.toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Items"),
+        title: Text("Generate Order"),
+        actions: [
+          IconButton(icon: Icon(Icons.alternate_email_outlined), onPressed: (){
+
+          }),
+          IconButton(icon: Image.asset(SMSIcon,color: Colors.white,scale: 2,),
+              onPressed: () async {
+                String order = "Order for Bill's Place for ${DateFormat('dd MMM yyyy').format(orderDate)} \n";
+            orderItems.where((element) => element.quantity > 0).forEach((element) {
+              order+= "${element.name} x ${element.quantity} \n";
+            });
+              await textMe(Uri.encodeFull(order));
+              }),
+        ],
       ),
       body: Column(
         children: <Widget>[
           Padding(
+            padding: const EdgeInsets.only(left:12,right: 12,top: 15),
+            child: DatePickerFormField(
+              label: 'Order Date',
+              onChanged: (DateTime date){
+                setState(() {
+                  orderDate = date;
+                });
+              }
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             child: AppTextField(
               icon: Icons.search,
-              placeholder: "Search",
+              placeholder: "Search Item",
             ),
           ),
           Expanded(
-              child: ListView.builder(
-            itemCount: dummyItems.length,
-            padding: EdgeInsets.all(10),
-            itemBuilder: (context, i) {
-              return plusMinus(
-                  add: () {
-                    setState(() {
-                      dummyItems[i].itemValue++;
-                    });
-                    return dummyItems[i].itemValue;
-                  },
-                  subtract: () {
-                    setState(() {
-                      dummyItems[i].itemValue--;
-                    });
-                    return dummyItems[i].itemValue;
-                  },
-                  name: dummyItems[i].itemName,
-                  value: dummyItems[i].itemValue.toString());
-            },
-          )),
+            child: ReorderableListView(
+              children: <Widget>[
+                for(final item in orderItems)
+                  orderItem(item)
+              ],
+              onReorder: reorderData,
+            ),
+          ),
           Container(
             decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10))),
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            ),
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 30),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
-                        "Total Product: 21 ",
-                        style: GoogleFonts.quicksand(
+                        "Total Items: ${orderItems.where((element) => element.quantity > 0).length} ",
+                        style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Text(
-                      "Total Distributors: 30",
-                      style: GoogleFonts.quicksand(
+                      "Order Amount: \$${_total()}",
+                      style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Material(
-                      borderRadius: BorderRadius.circular(6),
-                      elevation: 6,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).accentColor,
-                            borderRadius: BorderRadius.circular(6)),
-                        child: Text(
-                          "Submit",
-                          style: GoogleFonts.quicksand(color: Colors.white),
-                        ),
-                      ),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(right:10.0,bottom: 10),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: RaisedButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.white,
+                        color: Colors.red[900],
+                        onPressed: ()=> AppNavigation.to(context, AddItems()),
+                        child:Text("Add Item")),
                   ),
                 ),
+
               ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
             ),
           )
         ],
@@ -107,11 +131,29 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
     );
   }
 
-  Widget plusMinus({String name, var value, Function add, Function subtract}) {
+  void reorderData(int oldindex, int newindex){
+    setState(() {
+      if(newindex>oldindex){
+        newindex-=1;
+      }
+      final items = orderItems.removeAt(oldindex);
+      orderItems.insert(newindex, items);
+    });
+  }
+
+  void sorting(){
+    setState(() {
+      orderItems.sort();
+    });
+  }
+
+  Widget orderItem(ItemsModel item) {
     return Padding(
+      key: Key(item.name),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Container(
-        padding: EdgeInsets.all(10),
+        height: 80,
+        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(
             color: Colors.grey[500].withOpacity(0.2),
@@ -124,72 +166,35 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           child: Row(
             children: <Widget>[
-              Text(
-                name,
-                style: GoogleFonts.quicksand(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: <Widget>[
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          Icons.remove,
-                          color:Theme.of(context).primaryColor,
-                        ),
-                        onPressed: subtract),
+              Icon(CupertinoIcons.list_bullet),
+              Expanded(flex:1,child: Container()),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Container(
-                      width: 35,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 2, vertical: 8),
-                        child: Text(
-                          value,
-                          style: GoogleFonts.quicksand(
-                              fontSize: 12,
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).primaryColor),
-                        borderRadius: BorderRadius.circular(25),
-                        color: Colors.white),
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          Icons.add,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onPressed: add),
+                  Text(
+                    "\$${item.price}",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
-              )
+              ),
+              Expanded(flex:7,child: Container()),
+              Counter(
+                 onChange: (double val){
+                   setState(() {
+                     item.quantity = val.round();
+                   });
+                 })
             ],
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
           ),
         ),
       ),

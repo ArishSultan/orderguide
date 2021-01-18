@@ -1,17 +1,12 @@
 import 'package:inventoty_app/src/base/keys.dart';
 import 'package:inventoty_app/src/base/nav.dart';
-import 'package:inventoty_app/src/base/theme.dart';
+import 'package:inventoty_app/src/ui/pages/auth/forgot-password-dialog.dart';
 import 'package:inventoty_app/src/ui/pages/homepage.dart';
-import 'package:inventoty_app/src/ui/views/localized_view.dart';
-import 'package:inventoty_app/src/ui/widgits/text_field.dart';
+import 'package:inventoty_app/src/ui/widgets/text_field.dart';
 import 'package:inventoty_app/src/utils/validators.dart';
 import 'package:unicons/unicons.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../../app.dart';
-import 'forgot-password_page.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -20,6 +15,7 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _key = GlobalKey<FormState>();
+  var autoValidate = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +23,7 @@ class _SignInPageState extends State<SignInPage> {
       body: Center(
         child: Form(
           key: _key,
+          autovalidateMode: autoValidate,
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(30, 60, 30, 30),
             child: Column(
@@ -36,31 +33,22 @@ class _SignInPageState extends State<SignInPage> {
                 logo(imgPath: "assets/images/inventory.png"),
                 RichText(
                   text: TextSpan(
-                      text: "Order ",
+                      text: "Inventory Purchasing",
                       style: GoogleFonts.pacifico(
-                        fontSize: 35,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.red[900],
                       ),
                       children: [
                         TextSpan(
-                            text: "Guide",
+                            text: " Guide",
                             style: GoogleFonts.pacifico(
-                              fontSize: 35,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: Colors.blue[900],
                             ))
                       ]),
                 ),
-
-                // Text(
-                //   App.name,
-                //   style: GoogleFonts.pacifico(
-                //     fontSize: 28,
-                //     fontWeight: FontWeight.bold,
-                //     color: Color(0xfffcc522),
-                //   ),
-                // )
                 SizedBox(height: 10),
                 AppTextField(
                   key: Keys.signInEmail,
@@ -69,7 +57,6 @@ class _SignInPageState extends State<SignInPage> {
                   validator: Validators.requiredEmail,
                   //  onSaved: (email) => _data.username = email,
                   keyboardType: TextInputType.emailAddress,
-                  autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -78,8 +65,8 @@ class _SignInPageState extends State<SignInPage> {
                     placeholder: "Password",
                     icon: UniconsLine.lock_open_alt,
                     validator: Validators.requiredPassword,
+                    autoValidateMode: autoValidate,
                     //  onSaved: (password) => _data.password = password,
-                    autoValidateMode: AutovalidateMode.onUserInteraction,
                   ),
                 ),
                 Padding(
@@ -87,14 +74,11 @@ class _SignInPageState extends State<SignInPage> {
                   child: TextButton(
                     key: Keys.signInButton,
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => InventoryHomePage()));
+                      AppNavigation.to(context, InventoryHomePage(),replace: true);
                     },
                     style: TextButton.styleFrom(
-
                         shape: StadiumBorder(),
                         minimumSize: Size.fromHeight(50),
-
                         backgroundColor: Theme.of(context).accentColor),
                     child: Text("Sign in",style: GoogleFonts.quicksand(color: Colors.white,fontWeight: FontWeight.bold),),
                   ),
@@ -109,9 +93,9 @@ class _SignInPageState extends State<SignInPage> {
         padding: const EdgeInsets.only(bottom: 30),
         child: GestureDetector(
           key: Keys.forgotPasswordButton,
-          onTap: () => AppNavigation.to(context, ForgotPassword()),
+          onTap: () => showDialog(context: context,builder:(ctx)=> ForgotPasswordDialog()),
           child: Text(
-            "Forgot Password",
+            "Forgot Password?",
             textAlign: TextAlign.center,
             style: GoogleFonts.quicksand(
               color: Theme.of(context).primaryColor,

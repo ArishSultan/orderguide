@@ -1,22 +1,17 @@
+
 class ItemsModel {
-  String itemName;
-  int itemValue;
-  bool itemAdd;
-
-
-  ItemsModel({this.itemName,this.itemValue,this.itemAdd});
+  String name;
+  int quantity;
+  double price;
+  ItemsModel({this.name,this.quantity=0,this.price=28.45});
 }
 
 List<ItemsModel> dummyItems = [
-
-  ItemsModel(itemName: "Burger",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Coke",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Pan",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Dish",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Fish",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Bar b",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Pan",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Dish",itemValue: 1,itemAdd: false),
-  ItemsModel(itemName: "Fish",itemValue: 1,itemAdd: false),
-
+  ItemsModel(name: "Hot Dogs"),
+  ItemsModel(name: "Bucket Mayo"),
+  ItemsModel(name: "Onions"),
+  ItemsModel(name: "6x6 Tomatos"),
+  ItemsModel(name: "Green Peppers"),
+  ItemsModel(name: "16SL Lids"),
+  ItemsModel(name: "24J16 Cups"),
 ];

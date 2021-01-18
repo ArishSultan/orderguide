@@ -5,9 +5,8 @@ import 'package:inventoty_app/src/base/keys.dart';
 import 'package:inventoty_app/src/base/theme.dart';
 import 'package:inventoty_app/src/models/distributors-model.dart';
 import 'package:inventoty_app/src/models/items-model.dart';
-import 'package:inventoty_app/src/ui/widgits/text_field.dart';
-import 'package:inventoty_app/src/utils/validators.dart';
-import 'package:unicons/unicons.dart';
+import 'package:inventoty_app/src/ui/widgets/item-price_dialog.dart';
+import 'package:inventoty_app/src/ui/widgets/text_field.dart';
 
 class AddItems extends StatefulWidget {
   @override
@@ -29,7 +28,7 @@ class _AddItemsState extends State<AddItems> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Add Items"),
+        title: Text("Add an Item"),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -43,18 +42,28 @@ class _AddItemsState extends State<AddItems> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: AppTextField(
-                  icon: UniconsLine.search,
+                  icon: Icons.assignment_sharp,
                   placeholder: " Item Name",
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:10.0,vertical: 10),
+                  child: Text("Choose Distributors",style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16
+                  ),),
+                ),
+              ),
               Expanded(
                   child: ListView.builder(
-                itemCount: dummyDistributor.length,
+                itemCount: 3,
                 itemBuilder: (context, i) {
                   return Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Container(
                       decoration: BoxDecoration(
                           boxShadow: [
@@ -73,7 +82,7 @@ class _AddItemsState extends State<AddItems> {
                         activeColor: Colors.white,
                         checkColor: AppTheme.primaryColor,
                         title: Text(
-                          dummyDistributor[i].distributorName,
+                          dummyDistributor[i].name + "${i+1}",
                           style: GoogleFonts.quicksand(
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold),
@@ -83,6 +92,9 @@ class _AddItemsState extends State<AddItems> {
                           setState(
                             () {
                               dummyDistributor[i].isChecked = val;
+                              showDialog(context: context,builder: (context){
+                                return ItemPriceDialog();
+                              });
                             },
                           );
                         },

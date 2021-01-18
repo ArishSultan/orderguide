@@ -1,4 +1,4 @@
-package com.example.inventoty_app
+package com.billsplace.orderguide
 
 import io.flutter.embedding.android.FlutterActivity
 

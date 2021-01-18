@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "343102529554",
+    "project_id": "orderguide-acd9d",
+    "storage_bucket": "orderguide-acd9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343102529554:android:b9cf21d907f7c0e62578cb",
+        "android_client_info": {
+          "package_name": "com.billsplace.orderguide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343102529554-cpvv6apgt277ime1hrvvo04vftv0m4an.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC13THpafvRIfyl96lEkl_-IEfVu_PYViY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343102529554-cpvv6apgt277ime1hrvvo04vftv0m4an.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
