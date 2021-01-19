@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:orderguide/src/models/distributors-model.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
-import 'package:orderguide/src/db/distributor.dart';
+import 'package:orderguide/src/db/distributor_table.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -38,8 +38,6 @@ class AppDB extends _$AppDB {
 
   Future<List<Distributor>> getDistributors() async {
     final distributors = await select(distributorTable).get();
-    print('asdasd');
-    print(distributors);
     return distributors.map(
       (e) => Distributor(
         id: e.id,
@@ -51,6 +49,16 @@ class AppDB extends _$AppDB {
     ).toList();
   }
 }
+
+// DistributorTableCompanion _createDistributorCompanion(Distributor distributor) {
+//   return DistributorTableCompanion(
+//     id: distributor.id != null ? Value(distributor.id) : Value.absent(),
+//     name: Value(distributor.name),
+//     email: Value(distributor.email),
+//     phone: Value(distributor.phone),
+//     salesmanName: Value(distributor.salesmanName),
+//   );
+// }
 
 DistributorTableCompanion _createDistributorCompanion(Distributor distributor) {
   return DistributorTableCompanion(
