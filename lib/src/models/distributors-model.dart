@@ -1,16 +1,23 @@
-
-class DistributorsModel{
+class Distributor {
+  int id;
   String name;
   String email;
   String phone;
-  bool isChecked;
-  DistributorsModel({this.email,this.name,this.phone,this.isChecked});
+  String salesmanName;
+
+  Distributor({
+    this.id,
+    this.email,
+    this.name,
+    this.phone,
+    this.salesmanName,
+  });
 }
 
-List<DistributorsModel> dummyDistributor=[
-  DistributorsModel(name: "Panos Food",isChecked: false),
-  DistributorsModel(name: "Greco & Sons",isChecked: false),
-  DistributorsModel(name: "Turano Bakery",isChecked: false),
-  DistributorsModel(name: "J & K Proviaions",isChecked: false),
-  DistributorsModel(name: "Sysco Foods",isChecked: false),
-];
+// List<Distributor> dummyDistributor=[
+//   Distributor(name: "Panos Food",isChecked: false),
+//   Distributor(name: "Greco & Sons",isChecked: false),
+//   Distributor(name: "Turano Bakery",isChecked: false),
+//   Distributor(name: "J & K Proviaions",isChecked: false),
+//   Distributor(name: "Sysco Foods",isChecked: false),
+// ];

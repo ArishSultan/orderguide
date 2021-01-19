@@ -2,6 +2,16 @@ class Validators {
   static String required(String value) =>
       value.isNotEmpty ? null : 'This field must not be Empty';
 
+  static String contact(String value) {
+    if (value.length < 11) {
+      return 'Minimum 11 digits are required';
+    } else if (value.length > 15) {
+      return 'Maximum 15 characters are allowed';
+    }
+
+    return null;
+  }
+
   static String email(String value) {
     if (!RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",

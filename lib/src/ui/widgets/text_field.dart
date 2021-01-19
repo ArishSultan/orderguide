@@ -18,7 +18,7 @@ class AppTextField extends StatefulWidget {
   final String Function(String) validator;
 
   AppTextField({
-    @required this.key,
+    this.key,
     @required this.icon,
     @required this.placeholder,
     @required this.onSaved,

@@ -7,8 +7,8 @@ import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart'
 import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
 
 class DistributorTile extends StatefulWidget {
-  final DistributorsModel item;
-  DistributorTile({this.item});
+  final Distributor item;
+  DistributorTile(this.item);
   @override
   _DistributorTileState createState() => _DistributorTileState();
 }

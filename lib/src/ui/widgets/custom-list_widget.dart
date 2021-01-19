@@ -7,7 +7,7 @@ import '../../base/nav.dart';
 import '../pages/items/items-list_page.dart';
 
 class CustomChild extends StatefulWidget {
-  DistributorsModel model;
+  Distributor model;
   int itemCount;
   Function editTap;
   Function deleteTap;

@@ -81,23 +81,23 @@ class _AddItemsState extends State<AddItems> {
                         contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                         activeColor: Colors.white,
                         checkColor: AppTheme.primaryColor,
-                        title: Text(
-                          dummyDistributor[i].name + "${i+1}",
-                          style: GoogleFonts.quicksand(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        value: dummyDistributor[i].isChecked,
-                        onChanged: (val) {
-                          setState(
-                            () {
-                              dummyDistributor[i].isChecked = val;
-                              showDialog(context: context,builder: (context){
-                                return ItemPriceDialog();
-                              });
-                            },
-                          );
-                        },
+                        // title: Text(
+                        //   dummyDistributor[i].name + "${i+1}",
+                        //   style: GoogleFonts.quicksand(
+                        //       color: Theme.of(context).primaryColor,
+                        //       fontWeight: FontWeight.bold),
+                        // ),
+                        // value: dummyDistributor[i].isChecked,
+                        // onChanged: (val) {
+                        //   setState(
+                        //     () {
+                        //       dummyDistributor[i].isChecked = val;
+                        //       showDialog(context: context,builder: (context){
+                        //         return ItemPriceDialog();
+                        //       });
+                        //     },
+                        //   );
+                        // },
                       ),
                     ),
                   );

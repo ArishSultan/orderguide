@@ -9,7 +9,7 @@ import 'package:unicons/unicons.dart';
 import 'item-tile_widget.dart';
 
 class ItemsList extends StatefulWidget {
-  final DistributorsModel distributor;
+  final Distributor distributor;
   ItemsList({this.distributor});
   @override
   _ItemsListState createState() => _ItemsListState();
