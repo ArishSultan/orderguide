@@ -6,7 +6,7 @@ import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 
 class ItemTile extends StatefulWidget {
-  final ItemsModel item;
+  final Item item;
   ItemTile({this.item});
   @override
   _ItemTileState createState() => _ItemTileState();

@@ -10,7 +10,7 @@ import 'message-dialog.dart';
 import 'text_field.dart';
 
 class ItemPriceDialog extends StatefulWidget {
-  final ItemsModel item;
+  final Item item;
   ItemPriceDialog({this.item});
   @override
   State createState() => new ItemPriceDialogState();

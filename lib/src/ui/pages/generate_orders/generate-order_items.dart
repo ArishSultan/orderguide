@@ -16,7 +16,7 @@ class GenererateOrderItems extends StatefulWidget {
 }
 
 class _GenererateOrderItemsState extends State<GenererateOrderItems> {
-  List<ItemsModel> orderItems = [];
+  List<Item> orderItems = [];
   DateTime orderDate = DateTime.now();
 
 
@@ -147,7 +147,7 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
     });
   }
 
-  Widget orderItem(ItemsModel item) {
+  Widget orderItem(Item item) {
     return Padding(
       key: Key(item.name),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
