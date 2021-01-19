@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:orderguide/src/db/item_table.dart';
 import 'package:orderguide/src/models/distributors-model.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -9,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 
 part 'db.g.dart';
 
-@UseMoor(tables: [DistributorTable])
+@UseMoor(tables: [DistributorTable, ItemTable])
 class AppDB extends _$AppDB {
   static AppDB _instance;
   AppDB._() : super(_openConnection());
