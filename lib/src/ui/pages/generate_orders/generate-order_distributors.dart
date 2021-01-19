@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:orderguide/src/models/distributors-model.dart';
+import 'package:orderguide/src/models/distributor.dart';
 import 'package:unicons/unicons.dart';
 import '../../widgets/text_field.dart';
 import 'generate-order_items.dart';

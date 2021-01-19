@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/ui/widgets/simple_future.dart';
-import '../../../models/distributors-model.dart';
+import '../../../models/distributor.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
 import 'distributor-tile_widget.dart';
 

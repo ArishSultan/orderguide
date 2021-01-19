@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unicons/unicons.dart';
-import '../../models/items-model.dart';
+import '../../models/item.dart';
 import '../../utils/lazy_task.dart';
 import '../../utils/validators.dart';
 import 'message-dialog.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:orderguide/src/base/nav.dart';
-import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 
 class ItemTile extends StatefulWidget {

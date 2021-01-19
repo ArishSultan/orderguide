@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:orderguide/src/db/item_table.dart';
-import 'package:orderguide/src/models/distributors-model.dart';
+import 'package:orderguide/src/models/distributor.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:orderguide/src/db/distributor_table.dart';
@@ -51,15 +51,25 @@ class AppDB extends _$AppDB {
   }
 }
 
-// DistributorTableCompanion _createDistributorCompanion(Distributor distributor) {
-//   return DistributorTableCompanion(
-//     id: distributor.id != null ? Value(distributor.id) : Value.absent(),
-//     name: Value(distributor.name),
-//     email: Value(distributor.email),
-//     phone: Value(distributor.phone),
-//     salesmanName: Value(distributor.salesmanName),
-//   );
-// }
+DistributorTableCompanion _createItemCompanion(Distributor distributor) {
+  return DistributorTableCompanion(
+    id: distributor.id != null ? Value(distributor.id) : Value.absent(),
+    name: Value(distributor.name),
+    email: Value(distributor.email),
+    phone: Value(distributor.phone),
+    salesmanName: Value(distributor.salesmanName),
+  );
+}
+
+DistributorTableCompanion _createItemDistributionCompanion(Distributor distributor) {
+  return DistributorTableCompanion(
+    id: distributor.id != null ? Value(distributor.id) : Value.absent(),
+    name: Value(distributor.name),
+    email: Value(distributor.email),
+    phone: Value(distributor.phone),
+    salesmanName: Value(distributor.salesmanName),
+  );
+}
 
 DistributorTableCompanion _createDistributorCompanion(Distributor distributor) {
   return DistributorTableCompanion(

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:orderguide/src/base/keys.dart';
 import 'package:orderguide/src/base/theme.dart';
-import 'package:orderguide/src/models/distributors-model.dart';
-import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/models/distributor.dart';
+import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/widgets/item-price_dialog.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:orderguide/src/base/keys.dart';
 import 'package:orderguide/src/base/db.dart';
-import 'package:orderguide/src/models/distributors-model.dart';
+import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:orderguide/src/utils/lazy_task.dart';
 import 'package:orderguide/src/utils/validators.dart';

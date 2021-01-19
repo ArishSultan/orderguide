@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderguide/src/base/nav.dart';
-import 'package:orderguide/src/models/distributors-model.dart';
-import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/models/distributor.dart';
+import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:unicons/unicons.dart';
