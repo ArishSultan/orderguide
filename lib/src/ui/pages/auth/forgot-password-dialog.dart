@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventoty_app/src/ui/widgets/message-dialog.dart';
+import 'package:orderguide/src/ui/widgets/message-dialog.dart';
 import '../../../utils/lazy_task.dart';
 import '../../../utils/validators.dart';
 import '../../widgets/text_field.dart';

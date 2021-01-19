@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventoty_app/src/models/items-model.dart';
-import 'package:inventoty_app/src/ui/widgets/counter.dart';
-import 'package:inventoty_app/src/ui/widgets/date_picker_field.dart';
-import 'package:inventoty_app/src/ui/widgets/text_field.dart';
-import 'package:inventoty_app/src/utils/const.dart';
-import 'package:inventoty_app/src/utils/send-sms.dart';
+import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/ui/widgets/counter.dart';
+import 'package:orderguide/src/ui/widgets/date_picker_field.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/utils/const.dart';
+import 'package:orderguide/src/utils/send-sms.dart';
 import '../../../base/nav.dart';
 import '../items/add-items_page.dart';
 import 'package:intl/intl.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventoty_app/src/base/nav.dart';
+import 'package:orderguide/src/base/nav.dart';
 import '../../../models/distributors-model.dart';
-import 'package:inventoty_app/src/ui/pages/distributors/add-distributors_page.dart';
-import 'package:inventoty_app/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:unicons/unicons.dart';
 import 'distributor-tile_widget.dart';
 

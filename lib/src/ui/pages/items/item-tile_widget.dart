@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:inventoty_app/src/base/nav.dart';
-import 'package:inventoty_app/src/models/items-model.dart';
-import 'package:inventoty_app/src/ui/pages/items/add-items_page.dart';
+import 'package:orderguide/src/base/nav.dart';
+import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 
 class ItemTile extends StatefulWidget {
   final ItemsModel item;

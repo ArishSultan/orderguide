@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/ui/pages/distributors/distributors-list_page.dart';
-import 'package:inventoty_app/src/ui/pages/generate_orders/generate-order_distributors.dart';
-import 'package:inventoty_app/src/ui/widgets/home-tile.dart';
-import 'package:inventoty_app/src/utils/const.dart';
+import 'package:orderguide/src/ui/pages/distributors/distributors-list_page.dart';
+import 'package:orderguide/src/ui/pages/generate_orders/generate-order_distributors.dart';
+import 'package:orderguide/src/ui/widgets/home-tile.dart';
+import 'package:orderguide/src/utils/const.dart';
 import '../../base/nav.dart';
 import '../../base/nav.dart';
 import 'history/history_listing.dart';

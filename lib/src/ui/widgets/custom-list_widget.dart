@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/models/distributors-model.dart';
+import 'package:orderguide/src/models/distributors-model.dart';
 import '../../base/nav.dart';
 import '../pages/items/items-list_page.dart';
 

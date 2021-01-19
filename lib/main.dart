@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/ui/pages/auth/sign-in_page.dart';
+import 'package:orderguide/src/ui/pages/auth/sign-in_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

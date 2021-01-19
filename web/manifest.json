@@ -1,6 +1,6 @@
 {
-    "name": "inventoty_app",
-    "short_name": "inventoty_app",
+    "name": "orderguide",
+    "short_name": "orderguide",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

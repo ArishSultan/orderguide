@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/base/keys.dart';
-import 'package:inventoty_app/src/base/theme.dart';
-import 'package:inventoty_app/src/models/distributors-model.dart';
-import 'package:inventoty_app/src/models/items-model.dart';
-import 'package:inventoty_app/src/ui/widgets/item-price_dialog.dart';
-import 'package:inventoty_app/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/base/keys.dart';
+import 'package:orderguide/src/base/theme.dart';
+import 'package:orderguide/src/models/distributors-model.dart';
+import 'package:orderguide/src/models/items-model.dart';
+import 'package:orderguide/src/ui/widgets/item-price_dialog.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
 
 class AddItems extends StatefulWidget {
   @override

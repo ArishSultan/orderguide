@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventoty_app/src/base/keys.dart';
-import 'package:inventoty_app/src/base/theme.dart';
-import 'package:inventoty_app/src/ui/widgets/text_field.dart';
-import 'package:inventoty_app/src/utils/validators.dart';
+import 'package:orderguide/src/base/keys.dart';
+import 'package:orderguide/src/base/theme.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/utils/validators.dart';
 import 'package:unicons/unicons.dart';
 
 import '../../../models/distributors-model.dart';

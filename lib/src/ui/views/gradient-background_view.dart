@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventoty_app/src/base/theme.dart';
+import 'package:orderguide/src/base/theme.dart';
 
 class GradientBackgroundView extends DecoratedBox {
   GradientBackgroundView({Widget child})

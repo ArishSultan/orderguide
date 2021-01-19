@@ -1,9 +1,9 @@
-import 'package:inventoty_app/src/base/keys.dart';
-import 'package:inventoty_app/src/base/nav.dart';
-import 'package:inventoty_app/src/ui/pages/auth/forgot-password-dialog.dart';
-import 'package:inventoty_app/src/ui/pages/homepage.dart';
-import 'package:inventoty_app/src/ui/widgets/text_field.dart';
-import 'package:inventoty_app/src/utils/validators.dart';
+import 'package:orderguide/src/base/keys.dart';
+import 'package:orderguide/src/base/nav.dart';
+import 'package:orderguide/src/ui/pages/auth/forgot-password-dialog.dart';
+import 'package:orderguide/src/ui/pages/homepage.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/utils/validators.dart';
 import 'package:unicons/unicons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

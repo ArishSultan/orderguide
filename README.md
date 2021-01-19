@@ -1,4 +1,4 @@
-# inventoty_app
+# orderguide
 
 A new Flutter project.
 

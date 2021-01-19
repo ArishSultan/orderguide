@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:inventoty_app/src/ui/pages/distributors/distributors-list_page.dart';
+import 'package:orderguide/src/ui/pages/distributors/distributors-list_page.dart';
 
 import '../app.dart';
 import '../ui/pages/auth/sign-in_page.dart';

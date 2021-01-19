@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventoty_app/src/base/nav.dart';
+import 'package:orderguide/src/base/nav.dart';
 
 import 'order-detail_page.dart';
 
