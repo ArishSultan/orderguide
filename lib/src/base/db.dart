@@ -13,8 +13,13 @@ part 'db.g.dart';
 @UseMoor(tables: [DistributorTable, ItemTable])
 class AppDB extends _$AppDB {
   static AppDB _instance;
+
   AppDB._() : super(_openConnection());
+
   factory AppDB() {
+    // _instance?.close();
+    // _instance = AppDB._();
+    // return _instance;
     if (_instance == null) {
       _instance = AppDB._();
     }
@@ -37,17 +42,26 @@ class AppDB extends _$AppDB {
     return into(distributorTable).insert(_createDistributorCompanion(entry));
   }
 
-  Future<List<Distributor>> getDistributors() async {
-    final distributors = await select(distributorTable).get();
-    return distributors.map(
-      (e) => Distributor(
-        id: e.id,
-        name: e.name,
-        email: e.email,
-        phone: e.phone,
-        salesmanName: e.salesmanName,
-      ),
-    ).toList();
+  Future<List<Distributor>> getDistributors(String name) async {
+    List<DistributorTableData> distributors;
+    if (name?.isNotEmpty != null) {
+      final query = select(distributorTable)
+        ..where((tbl) => tbl.name.like('%$name%'));
+      distributors = await query.get();
+    } else {
+      distributors = await select(distributorTable).get();
+    }
+    return distributors
+        .map(
+          (e) => Distributor(
+            id: e.id,
+            name: e.name,
+            email: e.email,
+            phone: e.phone,
+            salesmanName: e.salesmanName,
+          ),
+        )
+        .toList();
   }
 }
 
@@ -61,7 +75,8 @@ DistributorTableCompanion _createItemCompanion(Distributor distributor) {
   );
 }
 
-DistributorTableCompanion _createItemDistributionCompanion(Distributor distributor) {
+DistributorTableCompanion _createItemDistributionCompanion(
+    Distributor distributor) {
   return DistributorTableCompanion(
     id: distributor.id != null ? Value(distributor.id) : Value.absent(),
     name: Value(distributor.name),

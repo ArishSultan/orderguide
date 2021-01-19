@@ -13,6 +13,7 @@ class AppTextField extends StatefulWidget {
   final Key key;
   final String placeholder;
   final Function(String) onSaved;
+  final Function(String) onChanged;
   final TextInputType keyboardType;
   final AutovalidateMode autoValidateMode;
   final String Function(String) validator;
@@ -21,9 +22,10 @@ class AppTextField extends StatefulWidget {
     this.key,
     @required this.icon,
     @required this.placeholder,
-    @required this.onSaved,
+    this.onSaved,
     this.keyboardType,
     this.validator,
+    this.onChanged,
     this.autoValidateMode = AutovalidateMode.disabled,
   }) : _isPassword = false;
 
@@ -31,9 +33,10 @@ class AppTextField extends StatefulWidget {
     @required this.icon,
     @required this.key,
     @required this.placeholder,
-    @required this.onSaved,
+    this.onSaved,
     this.keyboardType,
     this.validator,
+    this.onChanged,
     this.autoValidateMode = AutovalidateMode.onUserInteraction,
   }) : _isPassword = true;
 
@@ -59,6 +62,7 @@ class _AppTextFieldState extends State<AppTextField> {
         key: widget.key,
         icon: widget.icon,
         onSaved: widget.onSaved,
+        onChanged: widget.onChanged,
         validator: widget.validator,
         placeholder: widget.placeholder,
         keyboardType: widget.keyboardType,
@@ -76,6 +80,7 @@ class _TextField extends StatelessWidget {
   final Key key;
 
   final Function(String) onSaved;
+  final Function(String) onChanged;
   final TextInputType keyboardType;
   final AutovalidateMode autoValidateMode;
   final String Function(String) validator;
@@ -85,6 +90,7 @@ class _TextField extends StatelessWidget {
     @required this.placeholder,
     @required this.onSaved,
     this.obscure = false,
+    this.onChanged,
     @required this.key,
     this.suffix,
     this.keyboardType,
@@ -99,6 +105,7 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       key: key,
       onSaved: onSaved,
+      onChanged: onChanged,
       obscureText: obscure,
       keyboardType: keyboardType,
       autovalidateMode: autoValidateMode,

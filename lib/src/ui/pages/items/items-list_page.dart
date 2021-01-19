@@ -29,6 +29,8 @@ class _ItemsListState extends State<ItemsList> {
                 child: AppTextField(
                   icon: UniconsLine.search,
                   placeholder: " Search Item",
+                  onSaved: (val) {
+                  },
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),

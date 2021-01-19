@@ -28,9 +28,9 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
 
   String _total(){
     double sum = 0;
-    dummyItems.where((element) => element.quantity > 0).forEach((element) {
-      sum+=element.price * element.quantity;
-    });
+    // dummyItems.where((element) => element.quantity > 0).forEach((element) {
+    //   sum+=element.price * element.quantity;
+    // });
     return sum.toStringAsFixed(2);
   }
 
@@ -47,9 +47,9 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
           IconButton(icon: Image.asset(SMSIcon,color: Colors.white,scale: 2,),
               onPressed: () async {
                 String order = "Order for Bill's Place for ${DateFormat('dd MMM yyyy').format(orderDate)} \n";
-            orderItems.where((element) => element.quantity > 0).forEach((element) {
-              order+= "${element.name} x ${element.quantity} \n";
-            });
+            // orderItems.where((element) => element.quantity > 0).forEach((element) {
+            //   order+= "${element.name} x ${element.quantity} \n";
+            // });
               await textMe(Uri.encodeFull(order));
               }),
         ],
@@ -93,14 +93,14 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
               children: [
                 Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        "Total Items: ${orderItems.where((element) => element.quantity > 0).length} ",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 10),
+                    //   child: Text(
+                    //     "Total Items: ${orderItems.where((element) => element.quantity > 0).length} ",
+                    //     style: TextStyle(
+                    //         color: Colors.white, fontWeight: FontWeight.bold),
+                    //   ),
+                    // ),
                     Text(
                       "Order Amount: \$${_total()}",
                       style: TextStyle(
@@ -178,22 +178,22 @@ class _GenererateOrderItemsState extends State<GenererateOrderItems> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "\$${item.price}",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  // Text(
+                  //   "\$${item.price}",
+                  //   style: TextStyle(
+                  //       color: Colors.grey,
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.bold),
+                  // ),
                 ],
               ),
               Expanded(flex:7,child: Container()),
-              Counter(
-                 onChange: (double val){
-                   setState(() {
-                     item.quantity = val.round();
-                   });
-                 })
+              // Counter(
+              //    onChange: (double val){
+              //      setState(() {
+              //        item.quantity = val.round();
+              //      });
+              //    })
             ],
           ),
         ),
