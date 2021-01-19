@@ -16,7 +16,7 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _key = GlobalKey<FormState>();
   var autoValidate = AutovalidateMode.disabled;
-
+  bool rememberMe = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +33,7 @@ class _SignInPageState extends State<SignInPage> {
                 logo(imgPath: "assets/images/inventory.png"),
                 RichText(
                   text: TextSpan(
-                      text: "Inventory Purchasing",
+                      text: "Inventory ",
                       style: GoogleFonts.pacifico(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -41,11 +41,18 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       children: [
                         TextSpan(
-                            text: " Guide",
+                            text: "Purchasing",
                             style: GoogleFonts.pacifico(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: Colors.blue[900],
+                            )),
+                        TextSpan(
+                            text: " Guide",
+                            style: GoogleFonts.pacifico(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red[900],
                             ))
                       ]),
                 ),
@@ -59,7 +66,7 @@ class _SignInPageState extends State<SignInPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.only(top: 20),
                   child: AppTextField.password(
                     key: Keys.signInPassword,
                     placeholder: "Password",
@@ -68,6 +75,15 @@ class _SignInPageState extends State<SignInPage> {
                     autoValidateMode: autoValidate,
                     //  onSaved: (password) => _data.password = password,
                   ),
+                ),
+                Row(
+                  children: [
+                    Checkbox(value: rememberMe,
+                        onChanged: (bool val){
+
+                    }),
+                    Text("Remember me?")
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only( bottom: 15),
