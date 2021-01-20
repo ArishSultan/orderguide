@@ -72,12 +72,12 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
                 icon: UniconsLine.search,
                 placeholder: widget.searchMessage,
                 autoValidateMode: AutovalidateMode.onUserInteraction,
-                onChanged: (str) =>
-                    setState(() => _reFetchProducts(str)),
+                onChanged: (str) => setState(() => _reFetchProducts(str)),
               ),
             ),
           ),
         ),
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
       SimpleFutureBuilder<List<T>>(
         future: _items,
         errorBuilder: (context, error) {
@@ -94,14 +94,11 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
             return SliverFillRemaining(
                 child: Center(child: Text(widget.emptyMessage)));
           } else {
-            return SliverPadding(
-              padding: const EdgeInsets.only(top: 10),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) =>
-                      widget.builder(context, items[index], index),
-                  childCount: items.length,
-                ),
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) =>
+                    widget.builder(context, items[index], index),
+                childCount: items.length,
               ),
             );
           }
