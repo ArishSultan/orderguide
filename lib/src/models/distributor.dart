@@ -1,3 +1,5 @@
+import 'package:orderguide/src/base/db.dart';
+
 class Distributor {
   int id;
   String name;
@@ -12,12 +14,12 @@ class Distributor {
     this.phone,
     this.salesmanName,
   });
-}
 
-// List<Distributor> dummyDistributor=[
-//   Distributor(name: "Panos Food",isChecked: false),
-//   Distributor(name: "Greco & Sons",isChecked: false),
-//   Distributor(name: "Turano Bakery",isChecked: false),
-//   Distributor(name: "J & K Proviaions",isChecked: false),
-//   Distributor(name: "Sysco Foods",isChecked: false),
-// ];
+  Future<void> fill() async {
+    final data = await AppDB().getDistributor(id);
+    name = data.name;
+    email = data.email;
+    phone = data.phone;
+    salesmanName = data.salesmanName;
+  }
+}
