@@ -7,6 +7,7 @@ import 'package:orderguide/src/ui/views/item_search_view.dart';
 import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
 import 'package:orderguide/src/ui/pages/distributors/distributor-tile_widget.dart';
+import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
 
 class DistributorsListPage extends StatelessWidget {
   final controller = ItemSearchViewController();
@@ -23,11 +24,12 @@ class DistributorsListPage extends StatelessWidget {
         controller: controller,
         onFetch: AppDB().getDistributors,
         builder: (context, item, _) {
-          return DistributorTile(
-            item: item,
-            onTap: () =>
-                AppNavigation.to(context, ItemsList(distributor: item)),
-          );
+          return FancyTile();
+          // return DistributorTile(
+          //   item: item,
+          //   onTap: () =>
+          //       AppNavigation.to(context, ItemsList(distributor: item)),
+          // );
         },
       ),
       floatingActionButton: FloatingActionButton(

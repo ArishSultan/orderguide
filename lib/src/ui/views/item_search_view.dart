@@ -93,11 +93,14 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
             return SliverFillRemaining(
                 child: Center(child: Text(widget.emptyMessage)));
           } else {
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) =>
-                    widget.builder(context, items[index], index),
-                childCount: items.length,
+            return SliverPadding(
+              padding: const EdgeInsets.only(top: 10),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) =>
+                      widget.builder(context, items[index], index),
+                  childCount: items.length,
+                ),
               ),
             );
           }
