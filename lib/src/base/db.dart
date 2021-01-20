@@ -87,6 +87,10 @@ class AppDB extends _$AppDB {
     return (delete(itemTable)..where((t) => t.id.equals(entry.id))).go();
   }
 
+  Future<int> deleteItemDistribution(ItemDistribution distribution) {
+    return (delete(itemDistributionTable)..where((t) => t.id.equals(distribution.id))).go();
+  }
+
   Future<int> updateItem(Item entry) {
     return (update(itemTable)..where((t) => t.id.equals(entry.id)))
         .write(_createItemCompanion(entry));
