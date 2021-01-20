@@ -9,14 +9,25 @@ import 'package:orderguide/src/utils/lazy_task.dart';
 import 'package:orderguide/src/utils/validators.dart';
 import 'package:unicons/unicons.dart';
 
-class AddDistributors extends StatefulWidget {
+class EditDistributor extends StatefulWidget {
+  final Distributor distributor;
+
+  EditDistributor([this.distributor]);
+
   @override
-  _AddDistributorsState createState() => _AddDistributorsState();
+  _EditDistributorState createState() => _EditDistributorState();
 }
 
-class _AddDistributorsState extends State<AddDistributors> {
+class _EditDistributorState extends State<EditDistributor> {
+  Distributor distributor;
   final _key = GlobalKey<FormState>();
-  final _distributor = Distributor();
+
+  @override
+  void initState() {
+    super.initState();
+
+    distributor = widget.distributor ?? Distributor();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +39,17 @@ class _AddDistributorsState extends State<AddDistributors> {
       body: Form(
         key: _key,
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          padding: EdgeInsets.all(20),
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: AppTextField(
                   icon: UniconsLine.user,
+                  initialValue: distributor.name,
                   placeholder: "Distributor Name",
                   validator: Validators.required,
-                  onSaved: (name) => _distributor.name = name,
+                  onSaved: (name) => distributor.name = name,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
@@ -47,16 +59,18 @@ class _AddDistributorsState extends State<AddDistributors> {
                   icon: UniconsLine.user_square,
                   placeholder: "Salesman Name",
                   validator: Validators.required,
-                  onSaved: (name) => _distributor.salesmanName = name,
+                  initialValue: distributor.salesmanName,
+                  onSaved: (name) => distributor.salesmanName = name,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: AppTextField(
-                  onSaved: (phone) => _distributor.phone = phone,
+                  onSaved: (phone) => distributor.phone = phone,
                   icon: UniconsLine.phone,
                   placeholder: "Phone",
+                  initialValue: distributor.phone,
                   validator: Validators.multiple([
                     Validators.required,
                     Validators.contact,
@@ -68,26 +82,38 @@ class _AddDistributorsState extends State<AddDistributors> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: AppTextField(
-                  onSaved: (email) => _distributor.email = email,
+                  onSaved: (email) => distributor.email = email,
                   key: Keys.signInEmail,
                   icon: CupertinoIcons.mail,
                   placeholder: "Email",
+                  initialValue: distributor.email,
                   validator: Validators.requiredEmail,
                   keyboardType: TextInputType.emailAddress,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 30),
                 child: TextButton(
                   key: Keys.signInButton,
                   onPressed: () async {
+                    final isNew = distributor.id == null;
+
                     if (_key.currentState.validate()) {
                       _key.currentState.save();
 
                       await performLazyTask(
                         context,
-                        () => AppDB().addDistributor(_distributor),
+                        () {
+                          if (isNew) {
+                            return AppDB().addDistributor(distributor);
+                          } else {
+                            return AppDB().updateDistributor(distributor);
+                          }
+                        },
+                        message: isNew
+                            ? 'Registering Distributor'
+                            : 'Updating Distributor',
                       );
                       Navigator.of(context).pop();
                     }
