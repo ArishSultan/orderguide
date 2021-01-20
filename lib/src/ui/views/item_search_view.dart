@@ -45,12 +45,13 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
     super.initState();
     widget.controller._state = this;
 
-    _reFetchProducts();
+    _items = widget.onFetch();
   }
 
   _reFetchProducts([String search]) {
-    // if (search == null) search = '';
-    _items = widget.onFetch(search);
+    setState(() {
+      _items = widget.onFetch(search);
+    });
   }
 
   @override
