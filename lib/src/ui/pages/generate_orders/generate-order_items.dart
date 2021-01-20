@@ -37,7 +37,7 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
   @override
   void initState() {
     super.initState();
-    orderItems = dummyItems;
+    // orderItems = dummyItems;
   }
 
   String _total() {

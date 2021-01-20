@@ -4,9 +4,16 @@ class FancyTile extends StatelessWidget {
   final Widget title;
   final Widget leading;
   final Widget trailing;
+  final Widget subtitle;
   final VoidCallback onTap;
 
-  FancyTile({this.title, this.leading, this.onTap, this.trailing});
+  FancyTile({
+    this.title,
+    this.leading,
+    this.onTap,
+    this.trailing,
+    this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +34,7 @@ class FancyTile extends StatelessWidget {
         onTap: onTap,
         leading: leading,
         trailing: trailing,
+        subtitle: subtitle,
         contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
       ),
     );
