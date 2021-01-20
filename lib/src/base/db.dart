@@ -89,6 +89,18 @@ class AppDB extends _$AppDB {
         .insert(_createItemDistributionCompanion(entry));
   }
 
+  Future<List<ItemDistribution>> getDistributorDistributions(Distributor distributor) async {
+    final data = await (select(itemDistributionTable)
+      ..where((t) => t.distributor.equals(distributor.id)))
+        .get();
+
+    return data.map((e) => ItemDistribution(
+      price: e.price,
+      item: Item(id: e.item),
+      distributor: Distributor(id: e.item),
+    ));
+  }
+
   Future<List<ItemDistribution>> getItemDistributions(Item item) async {
     final data = await (select(itemDistributionTable)
           ..where((t) => t.item.equals(item.id)))
