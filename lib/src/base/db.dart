@@ -39,12 +39,20 @@ class AppDB extends _$AppDB {
   int get schemaVersion => 1;
 
   Future<int> addDistributor(Distributor entry) {
-
     // '''
     // into(distributorTable).insert()
     // INSERT INTO table_name(id, name) VALUES(0, 'Arish');
     // '''
     return into(distributorTable).insert(_createDistributorCompanion(entry));
+  }
+
+  Future<ItemTableData> getItem(int id) {
+    return (select(itemTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+  }
+
+  Future<DistributorTableData> getDistributor(int id) {
+    return (select(distributorTable)..where((tbl) => tbl.id.equals(id)))
+        .getSingle();
   }
 
   Future<int> updateDistributor(Distributor entry) {
@@ -89,16 +97,19 @@ class AppDB extends _$AppDB {
         .insert(_createItemDistributionCompanion(entry));
   }
 
-  Future<List<ItemDistribution>> getDistributorDistributions(Distributor distributor) async {
+  Future<List<ItemDistribution>> getDistributorDistributions(
+      Distributor distributor) async {
     final data = await (select(itemDistributionTable)
-      ..where((t) => t.distributor.equals(distributor.id)))
+          ..where((t) => t.distributor.equals(distributor.id)))
         .get();
 
-    return data.map((e) => ItemDistribution(
-      price: e.price,
-      item: Item(id: e.item),
-      distributor: Distributor(id: e.distributor),
-    )).toList();
+    return data
+        .map((e) => ItemDistribution(
+              price: e.price,
+              item: Item(id: e.item),
+              distributor: Distributor(id: e.distributor),
+            ))
+        .toList();
   }
 
   Future<List<ItemDistribution>> getItemDistributions(Item item) async {
@@ -106,11 +117,13 @@ class AppDB extends _$AppDB {
           ..where((t) => t.item.equals(item.id)))
         .get();
 
-    return data.map((e) => ItemDistribution(
-      price: e.price,
-      item: Item(id: e.item),
-      distributor: Distributor(id: e.distributor),
-    )).toList();
+    return data
+        .map((e) => ItemDistribution(
+              price: e.price,
+              item: Item(id: e.item),
+              distributor: Distributor(id: e.distributor),
+            ))
+        .toList();
   }
 
   Future<int> updateItemDistribution(ItemDistribution entry) {

@@ -1,18 +1,13 @@
-import 'distributor.dart';
+import 'package:orderguide/src/base/db.dart';
 
 class Item {
   int id;
   String name;
 
   Item({this.id, this.name});
-}
 
-List<Item> dummyItems = [
-  // Item(name: "Hot Dogs"),
-  // Item(name: "Bucket Mayo"),
-  // Item(name: "Onions"),
-  // Item(name: "6x6 Tomatos"),
-  // Item(name: "Green Peppers"),
-  // Item(name: "16SL Lids"),
-  // Item(name: "24J16 Cups"),
-];
+  Future<void> fill() async {
+    final data = await AppDB().getItem(id);
+    name = data.name;
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/models/distributor.dart';
 
 import 'item.dart';
