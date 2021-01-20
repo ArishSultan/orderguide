@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
-import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
+import 'package:orderguide/src/ui/pages/distributors/edit-distributor_page.dart';
 import 'package:orderguide/src/ui/widgets/dismissible_tile.dart';
 import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
 import 'package:orderguide/src/utils/lazy_task.dart';
@@ -11,9 +11,15 @@ import 'package:orderguide/src/utils/lazy_task.dart';
 class DistributorTile extends StatelessWidget {
   final bool dismissible;
   final VoidCallback onTap;
+  final VoidCallback onUpdated;
   final Distributor distributor;
 
-  DistributorTile(this.distributor, {this.dismissible = false, this.onTap});
+  DistributorTile(
+    this.distributor, {
+    this.dismissible = false,
+    this.onTap,
+    this.onUpdated,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +40,8 @@ class DistributorTile extends StatelessWidget {
         child: DismissibleTile(
           child: tile,
           onEdit: () async {
-            AppNavigation.to(context, AddDistributors());
+            await AppNavigation.to(context, EditDistributor(distributor));
+            onUpdated?.call();
             return false;
           },
           onRemove: () async {
@@ -44,15 +51,20 @@ class DistributorTile extends StatelessWidget {
                 return AlertDialog(
                   title: Text('Are you sure?'),
                   actions: [
-                    TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text('Yes')),
-                    TextButton(onPressed: Navigator.of(context).pop, child: Text('No')),
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Yes')),
+                    TextButton(
+                        onPressed: Navigator.of(context).pop,
+                        child: Text('No')),
                   ],
                 );
               },
             );
 
             if (result != null) {
-              await performLazyTask(context, () => AppDB().deleteDistributor(distributor));
+              await performLazyTask(
+                  context, () => AppDB().deleteDistributor(distributor));
               return true;
             } else {
               return false;
