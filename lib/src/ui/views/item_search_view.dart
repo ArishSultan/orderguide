@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:orderguide/src/ui/widgets/simple_future.dart';
-import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:unicons/unicons.dart';
+import 'package:flutter/material.dart';
+import 'package:orderguide/src/ui/widgets/text_field.dart';
+import 'package:orderguide/src/ui/widgets/simple_future.dart';
 
 typedef ItemBuilder<T> = Widget Function(BuildContext, T, int);
 typedef ItemFetcher<T> = Future<List<T>> Function([String search]);
 
 class ItemSearchView<T> extends StatefulWidget {
-  final ItemFetcher onFetch;
-  final ItemBuilder builder;
+  final ItemFetcher<T> onFetch;
+  final ItemBuilder<T> builder;
 
   final bool allowSearch;
   final String emptyMessage;
@@ -28,8 +28,15 @@ class ItemSearchView<T> extends StatefulWidget {
   _ItemSearchViewState<T> createState() => _ItemSearchViewState<T>();
 }
 
-class _ItemSearchViewState<T> extends State<ItemSearchView> {
+class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
   Future<List<T>> _items;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _items = widget.onFetch();
+  }
 
   @override
   Widget build(BuildContext context) {

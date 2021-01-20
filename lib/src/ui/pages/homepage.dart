@@ -48,7 +48,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             HomeTile(
               image: OrdersIcon,
               title: 'Generate Order',
-              onTap: () => AppNavigation.to(context, DistributorsList(true)),
+              onTap: () => AppNavigation.to(context, DistributorsList()),
             ),
             HomeTile(
               image: HistoryIcon,

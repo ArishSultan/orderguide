@@ -20,9 +20,6 @@ class AppDB extends _$AppDB {
   AppDB._() : super(_openConnection());
 
   factory AppDB() {
-    // _instance?.close();
-    // _instance = AppDB._();
-    // return _instance;
     if (_instance == null) {
       _instance = AppDB._();
     }
@@ -116,7 +113,7 @@ class AppDB extends _$AppDB {
   /// Distributor -> DistributorTableCompanion;
   /// DistributorTableData -> Distributor;
 
-  Future<List<Distributor>> getDistributors(String name) async {
+  Future<List<Distributor>> getDistributors([String name]) async {
     List<DistributorTableData> distributors;
     if (name?.isNotEmpty != null) {
       final query = select(distributorTable)
