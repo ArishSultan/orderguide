@@ -97,7 +97,7 @@ class AppDB extends _$AppDB {
     return data.map((e) => ItemDistribution(
       price: e.price,
       item: Item(id: e.item),
-      distributor: Distributor(id: e.item),
+      distributor: Distributor(id: e.distributor),
     )).toList();
   }
 
@@ -109,7 +109,7 @@ class AppDB extends _$AppDB {
     return data.map((e) => ItemDistribution(
       price: e.price,
       item: Item(id: e.item),
-      distributor: Distributor(id: e.item),
+      distributor: Distributor(id: e.distributor),
     )).toList();
   }
 

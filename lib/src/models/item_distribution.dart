@@ -14,4 +14,9 @@ class ItemDistribution {
     this.price,
     this.distributor,
   });
+
+  @override
+  String toString() {
+    return 'ItemDistribution(item: ${item.id}, distributor: ${distributor.id})';
+  }
 }
