@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+typedef DismissTileCallback = Future<bool> Function();
 class DismissibleTile extends StatelessWidget {
   final Widget child;
-  final VoidCallback onEdit;
-  final VoidCallback onRemove;
+  final DismissTileCallback onEdit;
+  final DismissTileCallback onRemove;
 
   DismissibleTile({this.child, this.onEdit, this.onRemove});
 
@@ -15,6 +16,15 @@ class DismissibleTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       key: UniqueKey(),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          return onEdit();
+        } else if (direction == DismissDirection.endToStart) {
+          return onRemove();
+        }
+
+        return true;
+      },
       secondaryBackground: Row(
         children: [
           const Text('Remove', style: TextStyle(color: Colors.red)),
