@@ -20,6 +20,7 @@ class DistributorTile extends StatelessWidget {
     final color = Theme.of(context).primaryColor;
 
     final tile = FancyTile(
+      onTap: onTap,
       title: Text(distributor.name, style: TextStyle(color: color)),
       leading: CircleAvatar(
         radius: 23,
