@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class FancyTile extends StatelessWidget {
   final Widget title;
   final Widget leading;
+  final Widget trailing;
   final VoidCallback onTap;
 
-  FancyTile({this.title, this.leading, this.onTap});
+  FancyTile({this.title, this.leading, this.onTap, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class FancyTile extends StatelessWidget {
         title: title,
         onTap: onTap,
         leading: leading,
+        trailing: trailing,
         contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
       ),
     );
