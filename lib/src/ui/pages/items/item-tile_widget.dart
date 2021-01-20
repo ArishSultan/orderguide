@@ -1,43 +1,66 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
+import 'package:orderguide/src/ui/pages/items/item-distributions-list_page.dart';
+import 'package:orderguide/src/ui/widgets/confirmation.dart';
+import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
+import 'package:orderguide/src/ui/widgets/dismissible_tile.dart';
+import 'package:orderguide/src/utils/lazy_task.dart';
 
-class ItemTile extends StatefulWidget {
+class ItemTile extends StatelessWidget {
   final Item item;
-  ItemTile(this.item);
-  @override
-  _ItemTileState createState() => _ItemTileState();
-}
 
-class _ItemTileState extends State<ItemTile> {
+  ItemTile(this.item);
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Slidable(
-        actionPane: SlidableBehindActionPane(),
-        actionExtentRatio: 0.25,
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            caption: 'Edit',
-            color: Colors.green,
-            icon: Icons.edit,
-            onTap: (){
-              AppNavigation.to(context, AddItems());
-            },
-          ),
-          IconSlideAction(
-            caption: 'Delete',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: (){},
-          ),
-        ],
-        child: Padding(
+    final color = Theme.of(context).primaryColor;
 
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      child: DismissibleTile(
+        onEdit: () async {
+          AppNavigation.to(context, AddItems(item));
+          return false;
+        },
+        onRemove: () => showConfirmation(
+          context,
+          onCanceled: () => false,
+          onConfirmed: () async {
+            final resp = await performLazyTask(context, () async {
+              final data = await AppDB().getItemDistributions(item);
+
+              if (data.isNotEmpty) {
+                return false;
+              } else {
+                await AppDB().deleteItem(item);
+                return true;
+              }
+            });
+
+            if (!resp) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Many Distributions are linked to this '
+                      'item, delete them first'),
+                )
+              );
+            }
+
+            return resp;
+          },
+        ),
+        child: FancyTile(
+          onTap: () => AppNavigation.to(context, ItemDistributionsListPage(item: item)),
+          leading: CircleAvatar(
+            radius: 23,
+            child: Text(item.name[0], style: TextStyle(color: Colors.white)),
+          ),
+          title: Text(item.name, style: TextStyle(color: color)),
         ),
       ),
     );
