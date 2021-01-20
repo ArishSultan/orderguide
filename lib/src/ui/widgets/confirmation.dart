@@ -30,9 +30,9 @@ Future<T> showConfirmation<T>(
   bool result;
 
   if (builder != null) {
-    final result = await showDialog(context: context, builder: builder);
+    result = await showDialog(context: context, builder: builder);
   } else if (defaultDialogBuilder != null) {
-    final result = await showDialog(
+    result = await showDialog(
       context: context,
       builder: defaultDialogBuilder,
     );
@@ -40,6 +40,7 @@ Future<T> showConfirmation<T>(
     throw 'No Dialog Builder was provided';
   }
 
+  print(result);
   if (result == true) {
     return onConfirmed();
   } else {
