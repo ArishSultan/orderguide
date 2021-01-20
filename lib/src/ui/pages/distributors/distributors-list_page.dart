@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
+import 'package:orderguide/src/ui/pages/items/item-distributions-list_page.dart';
 import 'package:orderguide/src/ui/views/item_search_view.dart';
 import 'package:orderguide/src/ui/widgets/distributor_tile.dart';
 import 'package:orderguide/src/ui/pages/distributors/edit-distributor_page.dart';
@@ -28,7 +29,7 @@ class DistributorsListPage extends StatelessWidget {
           dismissible: true,
           onUpdated: () => controller.refresh(),
           onTap: () =>
-              AppNavigation.to(context, DistributorItemsListPage(item)),
+              AppNavigation.to(context, ItemDistributionsListPage(distributor: item)),
         ),
       ),
       floatingActionButton: FloatingActionButton(

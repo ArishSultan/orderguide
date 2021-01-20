@@ -88,7 +88,9 @@ class AppDB extends _$AppDB {
   }
 
   Future<int> deleteItemDistribution(ItemDistribution distribution) {
-    return (delete(itemDistributionTable)..where((t) => t.id.equals(distribution.id))).go();
+    return (delete(itemDistributionTable)
+          ..where((t) => t.id.equals(distribution.id)))
+        .go();
   }
 
   Future<int> updateItem(Item entry) {
@@ -109,6 +111,7 @@ class AppDB extends _$AppDB {
 
     return data
         .map((e) => ItemDistribution(
+              id: e.id,
               price: e.price,
               item: Item(id: e.item),
               distributor: Distributor(id: e.distributor),
@@ -123,6 +126,7 @@ class AppDB extends _$AppDB {
 
     return data
         .map((e) => ItemDistribution(
+              id: e.id,
               price: e.price,
               item: Item(id: e.item),
               distributor: Distributor(id: e.distributor),

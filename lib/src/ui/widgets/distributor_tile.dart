@@ -8,6 +8,8 @@ import 'package:orderguide/src/ui/widgets/dismissible_tile.dart';
 import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
 import 'package:orderguide/src/utils/lazy_task.dart';
 
+import 'confirmation.dart';
+
 class DistributorTile extends StatelessWidget {
   final bool dismissible;
   final VoidCallback onTap;
@@ -44,32 +46,34 @@ class DistributorTile extends StatelessWidget {
             onUpdated?.call();
             return false;
           },
-          onRemove: () async {
-            final result = await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text('Are you sure?'),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: Text('Yes')),
-                    TextButton(
-                        onPressed: Navigator.of(context).pop,
-                        child: Text('No')),
-                  ],
-                );
-              },
-            );
+          onRemove: () => showConfirmation(
+            context,
+            onCanceled: () => false,
+            onConfirmed: () async {
+              final resp = await performLazyTask(context, () async {
+                final data = await AppDB().getDistributorDistributions(distributor);
 
-            if (result != null) {
-              await performLazyTask(
-                  context, () => AppDB().deleteDistributor(distributor));
-              return true;
-            } else {
-              return false;
-            }
-          },
+                if (data.isNotEmpty) {
+                  return false;
+                } else {
+                  await AppDB().deleteDistributor(distributor);
+                  return true;
+                }
+              });
+
+              if (!resp) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Many Distributions are linked to this '
+                          'Distributor, delete them first'),
+                    )
+                );
+              }
+
+              return resp;
+            },
+          )
         ),
       );
     } else {
