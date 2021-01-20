@@ -18,9 +18,9 @@ class DismissibleTile extends StatelessWidget {
       key: UniqueKey(),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          return onEdit();
+          return onEdit?.call();
         } else if (direction == DismissDirection.endToStart) {
-          return onRemove();
+          return onRemove?.call();
         }
 
         return true;
