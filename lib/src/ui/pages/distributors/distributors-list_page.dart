@@ -4,10 +4,10 @@ import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/ui/views/item_search_view.dart';
-import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
+import 'package:orderguide/src/ui/widgets/distributor_tile.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
-import 'package:orderguide/src/ui/pages/distributors/distributor-tile_widget.dart';
-import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
+
+import 'distributor-items-list_page.dart';
 
 class DistributorsListPage extends StatelessWidget {
   final controller = ItemSearchViewController();
@@ -23,14 +23,12 @@ class DistributorsListPage extends StatelessWidget {
       body: ItemSearchView<Distributor>(
         controller: controller,
         onFetch: AppDB().getDistributors,
-        builder: (context, item, _) {
-          return FancyTile();
-          // return DistributorTile(
-          //   item: item,
-          //   onTap: () =>
-          //       AppNavigation.to(context, ItemsList(distributor: item)),
-          // );
-        },
+        builder: (context, item, _) => DistributorTile(
+          item,
+          dismissible: true,
+          onTap: () =>
+              AppNavigation.to(context, DistributorItemsListPage(item)),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(CupertinoIcons.add),
