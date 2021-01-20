@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
+import 'package:orderguide/src/ui/pages/generate_orders/generate-order_items.dart';
+import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
 import 'package:orderguide/src/ui/widgets/simple_future.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:unicons/unicons.dart';
@@ -10,6 +12,10 @@ import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart'
 import 'distributor-tile_widget.dart';
 
 class DistributorsList extends StatefulWidget {
+  final bool forOrder;
+
+  DistributorsList([this.forOrder = false]);
+
   @override
   _DistributorsListState createState() => _DistributorsListState();
 }
@@ -90,7 +96,16 @@ class _DistributorsListState extends State<DistributorsList> {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return DistributorTile(distributors[index]);
+                      return DistributorTile(
+                        item: distributors[index],
+                        onTap: () {
+                          if (widget.forOrder) {
+                            AppNavigation.to(context, GenerateOrderItems());
+                          } else {
+                            AppNavigation.to(context,
+                                ItemsList(distributor: distributors[index]));                          }
+                        },
+                      );
                     },
                     childCount: distributors.length,
                   ),
@@ -100,13 +115,15 @@ class _DistributorsListState extends State<DistributorsList> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () async {
-          await AppNavigation.to(context, AddDistributors());
-          _fetchData();
-        },
-      ),
+      floatingActionButton: widget.forOrder
+          ? null
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () async {
+                await AppNavigation.to(context, AddDistributors());
+                _fetchData();
+              },
+            ),
     );
   }
 }

@@ -4,11 +4,13 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
-import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
 
 class DistributorTile extends StatefulWidget {
   final Distributor item;
-  DistributorTile(this.item);
+  final VoidCallback onTap;
+
+  DistributorTile({this.item, this.onTap});
+
   @override
   _DistributorTileState createState() => _DistributorTileState();
 }
@@ -49,7 +51,7 @@ class _DistributorTileState extends State<DistributorTile> {
               ),
             ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
             child: ListTile(
-              onTap: ()=> AppNavigation.to(context, ItemsList(distributor: widget.item)),
+              onTap: widget.onTap,
               contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
               leading: CircleAvatar(
                 backgroundColor: Theme.of(context).primaryColor,

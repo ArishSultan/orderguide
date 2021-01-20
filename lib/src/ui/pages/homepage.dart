@@ -23,8 +23,11 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
         centerTitle: true,
         // backgroundColor: Colors.blue[800],
         backgroundColor: Colors.white,
-        title: Image.asset("assets/images/inventory.png",scale: 2,),
-          elevation: 1,
+        title: Image.asset(
+          "assets/images/inventory.png",
+          scale: 2,
+        ),
+        elevation: 1,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(10),
@@ -35,22 +38,22 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             HomeTile(
               image: ItemsIcon,
               title: 'Items',
-              onTap: ()=> AppNavigation.to(context, ItemsList()),
+              onTap: () => AppNavigation.to(context, ItemsList()),
             ),
             HomeTile(
               image: DistributorsIcon,
               title: 'Distributors',
-              onTap: ()=> AppNavigation.to(context, DistributorsList()),
+              onTap: () => AppNavigation.to(context, DistributorsList()),
             ),
             HomeTile(
               image: OrdersIcon,
               title: 'Generate Order',
-              onTap: ()=> AppNavigation.to(context, GenerateOrderDistributorsList()),
+              onTap: () => AppNavigation.to(context, DistributorsList(true)),
             ),
             HomeTile(
               image: HistoryIcon,
               title: 'History',
-              onTap: ()=> AppNavigation.to(context, HistoryListing()),
+              onTap: () => AppNavigation.to(context, HistoryListing()),
             ),
           ],
         ),
@@ -83,8 +86,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                     colors: [
                       Colors.red[900],
                       Colors.blue[900],
-                    ]
-                ).createShader(bounds),
+                    ]).createShader(bounds),
                 child: Text(
                   text,
                   style: GoogleFonts.quicksand(

@@ -1,16 +1,19 @@
 import 'dart:io';
 
 import 'package:orderguide/src/db/item_table.dart';
+import 'package:orderguide/src/db/items-distribution_table.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:orderguide/src/db/distributor_table.dart';
+import 'package:orderguide/src/models/item.dart';
+import 'package:orderguide/src/models/item_distribution.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'db.g.dart';
 
-@UseMoor(tables: [DistributorTable, ItemTable])
+@UseMoor(tables: [DistributorTable, ItemTable, ItemDistributionTable])
 class AppDB extends _$AppDB {
   static AppDB _instance;
 
@@ -39,8 +42,79 @@ class AppDB extends _$AppDB {
   int get schemaVersion => 1;
 
   Future<int> addDistributor(Distributor entry) {
+
+    // '''
+    // into(distributorTable).insert()
+    // INSERT INTO table_name(id, name) VALUES(0, 'Arish');
+    // '''
     return into(distributorTable).insert(_createDistributorCompanion(entry));
   }
+
+  Future<int> updateDistributor(Distributor entry) {
+    return (update(distributorTable)..where((t) => t.id.equals(entry.id)))
+        .write(_createDistributorCompanion(entry));
+  }
+
+  Future<int> deleteDistributor(Distributor entry) {
+    return (delete(distributorTable)..where((t) => t.id.equals(entry.id))).go();
+  }
+
+  Future<int> addDistribution(ItemDistribution entry) {
+    return into(itemDistributionTable)
+        .insert(_createItemDistributionCompanion(entry));
+  }
+
+  Future<int> updateDistribution(ItemDistribution entry) {
+    return (update(itemDistributionTable)..where((t) => t.id.equals(entry.id)))
+        .write(_createItemDistributionCompanion(entry));
+  }
+
+  Future<int> deleteDistribution(ItemDistribution entry) {
+    return (delete(itemDistributionTable)..where((t) => t.id.equals(entry.id)))
+        .go();
+  }
+
+  Future<int> addItem(Item entry) {
+    return into(itemTable).insert(_createItemCompanion(entry));
+  }
+
+  Future<int> deleteItem(Item entry) {
+    return (delete(itemTable)..where((t) => t.id.equals(entry.id))).go();
+  }
+
+  Future<int> updateItem(Item entry) {
+    return (update(itemTable)..where((t) => t.id.equals(entry.id)))
+        .write(_createItemCompanion(entry));
+  }
+
+  Future<int> addItemDistribution(ItemDistribution entry) {
+    return into(itemDistributionTable)
+        .insert(_createItemDistributionCompanion(entry));
+  }
+
+  Future<List<ItemDistribution>> getItemDistributions(Item item) async {
+    final data = await (select(itemDistributionTable)
+          ..where((t) => t.item.equals(item.id)))
+        .get();
+
+    return data.map((e) => ItemDistribution(
+      price: e.price,
+      item: Item(id: e.item),
+      distributor: Distributor(id: e.item),
+    ));
+  }
+
+  Future<int> updateItemDistribution(ItemDistribution entry) {
+    return into(itemDistributionTable)
+        .insert(_createItemDistributionCompanion(entry));
+  }
+
+  /// Distributor
+  /// DistributorTableData - (Select, Get)
+  /// DistributorTableCompanion - (Insert, Update)
+  ///
+  /// Distributor -> DistributorTableCompanion;
+  /// DistributorTableData -> Distributor;
 
   Future<List<Distributor>> getDistributors(String name) async {
     List<DistributorTableData> distributors;
@@ -63,26 +137,34 @@ class AppDB extends _$AppDB {
         )
         .toList();
   }
+
+  Future<List<Item>> getItems(String name) async {
+    List<ItemTableData> items;
+    if (name?.isNotEmpty != null) {
+      final query = select(itemTable)..where((tbl) => tbl.name.like('%$name%'));
+      items = await query.get();
+    } else {
+      items = await select(itemTable).get();
+    }
+
+    return items.map((e) => Item(id: e.id, name: e.name)).toList();
+  }
 }
 
-DistributorTableCompanion _createItemCompanion(Distributor distributor) {
-  return DistributorTableCompanion(
+ItemTableCompanion _createItemCompanion(Item distributor) {
+  return ItemTableCompanion(
     id: distributor.id != null ? Value(distributor.id) : Value.absent(),
     name: Value(distributor.name),
-    email: Value(distributor.email),
-    phone: Value(distributor.phone),
-    salesmanName: Value(distributor.salesmanName),
   );
 }
 
-DistributorTableCompanion _createItemDistributionCompanion(
-    Distributor distributor) {
-  return DistributorTableCompanion(
-    id: distributor.id != null ? Value(distributor.id) : Value.absent(),
-    name: Value(distributor.name),
-    email: Value(distributor.email),
-    phone: Value(distributor.phone),
-    salesmanName: Value(distributor.salesmanName),
+ItemDistributionTableCompanion _createItemDistributionCompanion(
+    ItemDistribution distribution) {
+  return ItemDistributionTableCompanion(
+    id: distribution.id != null ? Value(distribution.id) : Value.absent(),
+    price: Value(distribution.price),
+    item: Value(distribution.item.id),
+    distributor: Value(distribution.distributor.id),
   );
 }
 

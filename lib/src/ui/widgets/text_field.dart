@@ -12,6 +12,7 @@ class AppTextField extends StatefulWidget {
   final IconData icon;
   final Key key;
   final String placeholder;
+  final String initialValue;
   final Function(String) onSaved;
   final Function(String) onChanged;
   final TextInputType keyboardType;
@@ -23,6 +24,7 @@ class AppTextField extends StatefulWidget {
     @required this.icon,
     @required this.placeholder,
     this.onSaved,
+    this.initialValue,
     this.keyboardType,
     this.validator,
     this.onChanged,
@@ -35,6 +37,7 @@ class AppTextField extends StatefulWidget {
     @required this.placeholder,
     this.onSaved,
     this.keyboardType,
+    this.initialValue,
     this.validator,
     this.onChanged,
     this.autoValidateMode = AutovalidateMode.onUserInteraction,
@@ -66,6 +69,7 @@ class _AppTextFieldState extends State<AppTextField> {
         validator: widget.validator,
         placeholder: widget.placeholder,
         keyboardType: widget.keyboardType,
+        initialValue: widget.initialValue,
         autoValidateMode: widget.autoValidateMode,
       );
     }
@@ -79,6 +83,7 @@ class _TextField extends StatelessWidget {
   final String placeholder;
   final Key key;
 
+  final String initialValue;
   final Function(String) onSaved;
   final Function(String) onChanged;
   final TextInputType keyboardType;
@@ -91,6 +96,7 @@ class _TextField extends StatelessWidget {
     @required this.onSaved,
     this.obscure = false,
     this.onChanged,
+    this.initialValue,
     @required this.key,
     this.suffix,
     this.keyboardType,
@@ -105,6 +111,7 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       key: key,
       onSaved: onSaved,
+      initialValue: initialValue,
       onChanged: onChanged,
       obscureText: obscure,
       keyboardType: keyboardType,
@@ -122,25 +129,25 @@ class _TextField extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
         contentPadding:
-        EdgeInsets.fromLTRB(30, 16, suffix != null ? -35 : 15, 16),
+            EdgeInsets.fromLTRB(30, 16, suffix != null ? -35 : 15, 16),
         fillColor: Colors.grey.withOpacity(.05),
         prefixIcon: icon != null
             ? CustomPaint(
-          painter: _PrefixPainter(),
-          child: Container(
-            width: 57,
-            height: 51,
-            child: Center(
-              child: Icon(
-                icon,
-                size: 24,
-                color: Colors.brown,
-              ),
-            ),
-            margin: const EdgeInsets.only(right: 5),
-            padding: const EdgeInsets.only(right: 6),
-          ),
-        )
+                painter: _PrefixPainter(),
+                child: Container(
+                  width: 57,
+                  height: 51,
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      size: 24,
+                      color: Colors.brown,
+                    ),
+                  ),
+                  margin: const EdgeInsets.only(right: 5),
+                  padding: const EdgeInsets.only(right: 6),
+                ),
+              )
             : null,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: color, width: 1),

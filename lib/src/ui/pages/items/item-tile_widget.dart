@@ -7,7 +7,7 @@ import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 
 class ItemTile extends StatefulWidget {
   final Item item;
-  ItemTile({this.item});
+  ItemTile(this.item);
   @override
   _ItemTileState createState() => _ItemTileState();
 }

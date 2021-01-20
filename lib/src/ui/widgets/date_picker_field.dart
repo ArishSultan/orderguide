@@ -42,6 +42,8 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
       controller: _controller,
       onTap: _handleSelection,
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
         suffixIcon: Padding(
           padding: const EdgeInsets.only(right: 10),
           child: Icon(
