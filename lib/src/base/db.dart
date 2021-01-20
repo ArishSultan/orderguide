@@ -147,7 +147,7 @@ class AppDB extends _$AppDB {
         .toList();
   }
 
-  Future<List<Item>> getItems(String name) async {
+  Future<List<Item>> getItems([String name]) async {
     List<ItemTableData> items;
     if (name?.isNotEmpty != null) {
       final query = select(itemTable)..where((tbl) => tbl.name.like('%$name%'));
