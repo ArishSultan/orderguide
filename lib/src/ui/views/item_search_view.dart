@@ -6,9 +6,16 @@ import 'package:orderguide/src/ui/widgets/simple_future.dart';
 typedef ItemBuilder<T> = Widget Function(BuildContext, T, int);
 typedef ItemFetcher<T> = Future<List<T>> Function([String search]);
 
+class ItemSearchViewController {
+  _ItemSearchViewState _state;
+
+  Future<void> refresh() => _state?._reFetchProducts();
+}
+
 class ItemSearchView<T> extends StatefulWidget {
   final ItemFetcher<T> onFetch;
   final ItemBuilder<T> builder;
+  final ItemSearchViewController controller;
 
   final bool allowSearch;
   final String emptyMessage;
@@ -18,6 +25,7 @@ class ItemSearchView<T> extends StatefulWidget {
   ItemSearchView({
     this.onFetch,
     this.builder,
+    this.controller,
     this.allowSearch = true,
     this.emptyMessage = 'No Items Registered',
     this.searchMessage = 'Search Items',
@@ -29,13 +37,20 @@ class ItemSearchView<T> extends StatefulWidget {
 }
 
 class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
+  // String search;
   Future<List<T>> _items;
 
   @override
   void initState() {
     super.initState();
+    widget.controller._state = this;
 
-    _items = widget.onFetch();
+    _reFetchProducts();
+  }
+
+  _reFetchProducts([String search]) {
+    // if (search == null) search = '';
+    _items = widget.onFetch(search);
   }
 
   @override
@@ -52,12 +67,12 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 13),
               child: AppTextField(
+                // initialValue: search,
                 icon: UniconsLine.search,
                 placeholder: widget.searchMessage,
                 autoValidateMode: AutovalidateMode.onUserInteraction,
-                onChanged: (str) => setState(() {
-                  _items = widget.onFetch(str);
-                }),
+                onChanged: (str) =>
+                    setState(() => _reFetchProducts(str)),
               ),
             ),
           ),
