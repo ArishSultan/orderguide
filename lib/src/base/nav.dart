@@ -3,9 +3,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:orderguide/src/ui/pages/distributors/distributors-list_page.dart';
 
-import '../app.dart';
-import '../ui/pages/auth/sign-in_page.dart';
-import '../ui/pages/auth/sign-in_page.dart';
 import '../ui/pages/auth/sign-in_page.dart';
 
 class AppPage {
@@ -16,12 +13,12 @@ class AppPage {
   static const home = AppPage._('/');
   static const signIn = AppPage._('/sign-in');
   static const signUp = AppPage._('/sign-up');
-  static const distributorsList =AppPage._("/distributorsList");
-
+  static const distributorsList = AppPage._("/distributorsList");
 }
 
 abstract class AppNavigation {
-  static Future<void> to(BuildContext context, Widget page, {bool replace = false}) {
+  static Future<void> to(BuildContext context, Widget page,
+      {bool replace = false}) {
     if (replace) {
       return Navigator.of(context).pushReplacement(CupertinoPageRoute(
         builder: (context) => page,
@@ -32,7 +29,7 @@ abstract class AppNavigation {
       ));
     }
   }
-  
+
   static Future<void> toPage(BuildContext context, AppPage page) {
     return Navigator.of(context).pushNamed(page._name);
   }
@@ -44,12 +41,12 @@ abstract class AppNavigation {
       .popUntil((route) => route.settings.name == AppPage.home._name);
 
   static final routes = <String, WidgetBuilder>{
-     AppPage.home._name: (context) => SignInPage(),
-    AppPage.distributorsList._name: (context)=>DistributorsList(),
+    AppPage.home._name: (context) => SignInPage(),
+    AppPage.distributorsList._name: (context) => DistributorsListPage(),
 
-     // AppPage.home._name: (context) => DriverSearchingPage(),
+    // AppPage.home._name: (context) => DriverSearchingPage(),
     //AppPage.home._name: (context) => AppData.auth.isAuthenticated?HomePage():SignInPage(),
-        // AppData.auth.isAuthenticated ? FoodeeHomePage() : SignInPage(),
+    // AppData.auth.isAuthenticated ? FoodeeHomePage() : SignInPage(),
     // SignInPage()
   };
 }
