@@ -1,75 +1,69 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
+import 'package:orderguide/src/ui/widgets/dismissible_tile.dart';
+import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
+import 'package:orderguide/src/utils/lazy_task.dart';
 
-class DistributorTile extends StatefulWidget {
-  final Distributor item;
+class DistributorTile extends StatelessWidget {
+  final bool dismissible;
   final VoidCallback onTap;
+  final Distributor distributor;
 
-  DistributorTile({this.item, this.onTap});
+  DistributorTile(this.distributor, {this.dismissible = false, this.onTap});
 
-  @override
-  _DistributorTileState createState() => _DistributorTileState();
-}
-
-class _DistributorTileState extends State<DistributorTile> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Slidable(
-        actionPane: SlidableBehindActionPane(),
-        actionExtentRatio: 0.25,
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            caption: 'Edit',
-            color: Colors.green,
-            icon: Icons.edit,
-            onTap: (){
-              AppNavigation.to(context, AddDistributors());
-            },
-          ),
-          IconSlideAction(
-            caption: 'Delete',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: (){},
-          ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-          child: Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: Colors.grey[500].withOpacity(0.2),
-                spreadRadius: 5,
-                blurRadius: 10,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            child: ListTile(
-              onTap: widget.onTap,
-              contentPadding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
-                  widget.item.name[0],
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              title: Text(
-                widget.item.name,
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ),
+    final color = Theme.of(context).primaryColor;
+
+    final tile = FancyTile(
+      title: Text(distributor.name, style: TextStyle(color: color)),
+      leading: CircleAvatar(
+        radius: 23,
+        child: Text(distributor.name[0], style: TextStyle(color: Colors.white)),
       ),
     );
+
+    if (dismissible) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        child: DismissibleTile(
+          child: tile,
+          onEdit: () async {
+            AppNavigation.to(context, AddDistributors());
+            return false;
+          },
+          onRemove: () async {
+            final result = await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Are you sure?'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text('Yes')),
+                    TextButton(onPressed: Navigator.of(context).pop, child: Text('No')),
+                  ],
+                );
+              },
+            );
+
+            if (result != null) {
+              await performLazyTask(context, () => AppDB().deleteDistributor(distributor));
+              return true;
+            } else {
+              return false;
+            }
+          },
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        child: tile,
+      );
+    }
   }
 }
