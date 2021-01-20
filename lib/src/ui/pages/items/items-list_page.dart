@@ -5,6 +5,7 @@ import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
+import 'package:orderguide/src/ui/views/item_search_view.dart';
 import 'package:orderguide/src/ui/widgets/simple_future.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:unicons/unicons.dart';
@@ -20,92 +21,19 @@ class ItemsList extends StatefulWidget {
 }
 
 class _ItemsListState extends State<ItemsList> {
-  Future<List<Item>> items;
-
-  void _fetchData([String search]) {
-    setState(() {
-      items = AppDB().getItems(search);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
+  final controller = ItemSearchViewController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(widget.distributor == null
-            ? "Items"
-            : widget.distributor.name + " Items"),
-      ),
-      body:
-      CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            titleSpacing: 0,
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 13),
-                child: AppTextField(
-                  icon: UniconsLine.search,
-                  placeholder: " Search Item",
-                  autoValidateMode: AutovalidateMode.onUserInteraction,
-                  onChanged: (str) {
-                    print(str);
-                    _fetchData(str);
-                  },
-                ),
-              ),
-            ),
-          ),
-          SimpleFutureBuilder<List<Item>>(
-            future: items,
-            errorBuilder: (context, error) {
-              return SliverFillRemaining(
-                child: Center(child: Text(error.toString())),
-              );
-            },
-            unknownBuilder: (context) {
-              return const SliverFillRemaining(
-                child: Center(child: Text('No Connection')),
-              );
-            },
-            loadingBuilder: (context, _) {
-              return const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            },
-            builder: (context, List<Item> items) {
-              if (items.isEmpty) {
-                return const SliverFillRemaining(
-                  child: Center(
-                    child: Text('No Items Registered'),
-                  ),
-                );
-              } else {
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      return ItemTile(items[index]);
-                    },
-                    childCount: items.length,
-                  ),
-                );
-              }
-            },
-          ),
-        ],
+      appBar: AppBar(title: Text('Items')),
+      body: ItemSearchView<Item>(
+        controller: controller,
+        onFetch: AppDB().getItems,
+        builder: (context, item, _) {
+          return ItemTile(item);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
