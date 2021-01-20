@@ -8,7 +8,7 @@ import 'package:orderguide/src/ui/pages/items/items-list_page.dart';
 import 'package:orderguide/src/ui/pages/distributors/add-distributors_page.dart';
 import 'package:orderguide/src/ui/pages/distributors/distributor-tile_widget.dart';
 
-class DistributorsList extends StatelessWidget {
+class DistributorsListPage extends StatelessWidget {
   final controller = ItemSearchViewController();
 
   @override
