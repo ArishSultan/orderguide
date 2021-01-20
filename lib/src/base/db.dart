@@ -98,7 +98,7 @@ class AppDB extends _$AppDB {
       price: e.price,
       item: Item(id: e.item),
       distributor: Distributor(id: e.item),
-    ));
+    )).toList();
   }
 
   Future<List<ItemDistribution>> getItemDistributions(Item item) async {
@@ -110,7 +110,7 @@ class AppDB extends _$AppDB {
       price: e.price,
       item: Item(id: e.item),
       distributor: Distributor(id: e.item),
-    ));
+    )).toList();
   }
 
   Future<int> updateItemDistribution(ItemDistribution entry) {
