@@ -10,6 +10,8 @@ import 'package:moor/moor.dart';
 import 'package:orderguide/src/db/distributor_table.dart';
 import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/models/item_distribution.dart';
+import 'package:orderguide/src/models/order.dart';
+import 'package:orderguide/src/models/order_item.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -118,12 +120,14 @@ class AppDB extends _$AppDB {
         .get();
 
     return data
-        .map((e) => ItemDistribution(
-              id: e.id,
-              price: e.price,
-              item: Item(id: e.item),
-              distributor: Distributor(id: e.distributor),
-            ))
+        .map(
+          (e) => ItemDistribution(
+            id: e.id,
+            price: e.price,
+            item: Item(id: e.item),
+            distributor: Distributor(id: e.distributor),
+          ),
+        )
         .toList();
   }
 
@@ -133,12 +137,79 @@ class AppDB extends _$AppDB {
         .get();
 
     return data
-        .map((e) => ItemDistribution(
-              id: e.id,
-              price: e.price,
-              item: Item(id: e.item),
-              distributor: Distributor(id: e.distributor),
-            ))
+        .map(
+          (e) => ItemDistribution(
+            id: e.id,
+            price: e.price,
+            item: Item(id: e.item),
+            distributor: Distributor(id: e.distributor),
+          ),
+        )
+        .toList();
+  }
+
+  Future<List<OrderItem>> getOrderItems(int orderId) async {
+    final items = await (select(orderItemsTable)
+          ..where((tbl) => tbl.orderId.equals(orderId)))
+        .get();
+
+    return items
+        .map(
+          (e) => OrderItem(
+            id: e.id,
+            name: e.name,
+            price: e.price,
+            orderId: orderId,
+            quantity: e.quantity,
+            completed: e.completed,
+          ),
+        )
+        .toList();
+  }
+
+  Future<Order> getOrder(int id) async {
+    final data =
+        await (select(ordersTable)..where((t) => t.id.equals(id))).getSingle();
+
+    final dist = Distributor(id: data.distributor);
+    await dist.fill();
+
+    return Order(
+      id: data.id,
+      price: data.price,
+      createdAt: data.createdAt,
+      distributor: dist,
+      items: await getOrderItems(data.id),
+    );
+  }
+
+  Future<int> markOrderItemAsComplete(OrderItem item) {
+    item.completed = true;
+    return (update(orderItemsTable)..where((tbl) => tbl.id.equals(item.id)))
+        .write(
+      OrderItemsTableCompanion(
+        id: Value(item.id),
+        name: Value(item.name),
+        price: Value(item.price),
+        orderId: Value(item.orderId),
+        quantity: Value(item.quantity),
+        completed: Value(item.completed),
+      ),
+    );
+  }
+
+  Future<List<Order>> getAllOrders() async {
+    final data = await select(ordersTable).get();
+
+    return data
+        .map(
+          (e) => Order(
+            id: e.id,
+            price: e.price,
+            createdAt: e.createdAt,
+            distributor: Distributor(id: e.distributor),
+          ),
+        )
         .toList();
   }
 
@@ -146,13 +217,6 @@ class AppDB extends _$AppDB {
     return into(itemDistributionTable)
         .insert(_createItemDistributionCompanion(entry));
   }
-
-  /// Distributor
-  /// DistributorTableData - (Select, Get)
-  /// DistributorTableCompanion - (Insert, Update)
-  ///
-  /// Distributor -> DistributorTableCompanion;
-  /// DistributorTableData -> Distributor;
 
   Future<List<Distributor>> getDistributors([String name]) async {
     List<DistributorTableData> distributors;
