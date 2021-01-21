@@ -1,14 +1,16 @@
 import 'package:orderguide/src/models/item.dart';
 
 class OrderItem extends Item {
+  int itemId;
+  int orderId;
   int quantity;
   double price;
   bool completed;
-  int orderId;
 
   OrderItem({
     int id,
     String name,
+    this.itemId,
     this.orderId,
     this.quantity,
     this.price,
