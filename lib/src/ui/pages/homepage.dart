@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:orderguide/src/ui/pages/distributors/distributors-list_page.dart';
 import 'package:orderguide/src/ui/pages/generate_orders/generate-order_distributors.dart';
+import 'package:orderguide/src/ui/pages/items/item-history_page.dart';
+import 'package:orderguide/src/ui/pages/items/item-selection_page.dart';
 import 'package:orderguide/src/ui/widgets/home-tile.dart';
 import 'package:orderguide/src/utils/const.dart';
 import '../../base/nav.dart';
@@ -19,15 +21,18 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        // backgroundColor: Colors.blue[800],
-        backgroundColor: Colors.white,
-        title: Image.asset(
-          "assets/images/inventory.png",
-          scale: 2,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).padding.top + 50),
+        child: Material(
+          elevation: 10,
+          child: Align(
+            alignment: Alignment(0, .6),
+            child: Image.asset(
+              "assets/images/inventory.png",
+              scale: 2,
+            ),
+          ),
         ),
-        elevation: 1,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(10),
@@ -48,12 +53,23 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             HomeTile(
               image: OrdersIcon,
               title: 'Generate Order',
-              onTap: () => AppNavigation.to(context, DistributorsListPage()),
+              onTap: () =>
+                  AppNavigation.to(context, GenerateOrderDistributorsList()),
+            ),
+            HomeTile(
+              image: CheckInIcon,
+              title: 'Check In',
+              onTap: () => AppNavigation.to(context, HistoryListing(false)),
             ),
             HomeTile(
               image: HistoryIcon,
-              title: 'History',
-              onTap: () => AppNavigation.to(context, HistoryListing()),
+              title: 'Order History',
+              onTap: () => AppNavigation.to(context, HistoryListing(true)),
+            ),
+            HomeTile(
+              image: HistoryIcon,
+              title: 'Items History',
+              onTap: () => AppNavigation.to(context, ItemSelectionPage()),
             ),
           ],
         ),
