@@ -218,6 +218,28 @@ class AppDB extends _$AppDB {
         .insert(_createItemDistributionCompanion(entry));
   }
 
+  Future<int> placeOrder(Order order) async {
+    final id = await into(ordersTable).insert(OrdersTableCompanion(
+      id: Value.absent(),
+      price: Value(order.price),
+      createdAt: Value(order.createdAt),
+      distributor: Value(order.distributor.id),
+    ));
+
+    for (final item in order.items) {
+      await into(orderItemsTable).insert(OrderItemsTableCompanion(
+        id: Value.absent(),
+        orderId: Value(id),
+        name: Value(item.name),
+        price: Value(item.price),
+        quantity: Value(item.quantity),
+        completed: Value(item.completed),
+      ));
+    }
+
+    return 0;
+  }
+
   Future<List<Distributor>> getDistributors([String name]) async {
     List<DistributorTableData> distributors;
     if (name?.isNotEmpty != null) {
