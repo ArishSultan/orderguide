@@ -5,6 +5,8 @@ class OrdersTable extends Table {
   String get tableName => 'orders';
 
   IntColumn get id => integer().autoIncrement()();
+  IntColumn get count => integer()();
+  BoolColumn get completed => boolean()();
 
   IntColumn get distributor =>
       integer().customConstraint('NOT NULL REFERENCES distributors(id)')();
