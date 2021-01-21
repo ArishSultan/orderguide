@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:orderguide/src/db/item_table.dart';
 import 'package:orderguide/src/db/items-distribution_table.dart';
+import 'package:orderguide/src/db/orders_table.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -13,7 +14,7 @@ import 'package:path_provider/path_provider.dart';
 
 part 'db.g.dart';
 
-@UseMoor(tables: [DistributorTable, ItemTable, ItemDistributionTable])
+@UseMoor(tables: [DistributorTable, ItemTable, ItemDistributionTable, OrdersTable])
 class AppDB extends _$AppDB {
   static AppDB _instance;
 
