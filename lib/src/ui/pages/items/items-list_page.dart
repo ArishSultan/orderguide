@@ -6,9 +6,6 @@ import 'package:orderguide/src/models/distributor.dart';
 import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/ui/pages/items/add-items_page.dart';
 import 'package:orderguide/src/ui/views/item_search_view.dart';
-import 'package:orderguide/src/ui/widgets/simple_future.dart';
-import 'package:orderguide/src/ui/widgets/text_field.dart';
-import 'package:unicons/unicons.dart';
 import 'item-tile_widget.dart';
 
 class ItemsList extends StatefulWidget {
@@ -38,7 +35,7 @@ class _ItemsListState extends State<ItemsList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await AppNavigation.to(context, AddItems());
-          setState(() {});
+          controller.refresh();
         },
         child: Icon(Icons.add),
       ),
