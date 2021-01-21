@@ -5,5 +5,6 @@ class OrderItemsTable extends Table {
   IntColumn get quantity => integer()();
   TextColumn get name => text()();
   RealColumn get price => real()();
+  BoolColumn get completed => boolean()();
   IntColumn get orderId => integer().customConstraint('NOT NULL REFERENCES orders(id)')();
 }
