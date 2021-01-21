@@ -1,84 +1,177 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:orderguide/src/base/db.dart';
+import 'package:orderguide/src/models/order.dart';
+import 'package:orderguide/src/models/order_item.dart';
+import 'package:orderguide/src/utils/lazy_task.dart';
 
 class OrderDetailPage extends StatefulWidget {
+  final Order order;
+  final bool isCheckIn;
+
+  OrderDetailPage(this.order, [this.isCheckIn = true]);
+
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
+  Order order;
+  var loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    AppDB().getOrder(widget.order.id).then((value) {
+      loading = false;
+      order = value;
+
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('18, January 2021'),
+        title: Text(DateFormat('dd MMM y').format(widget.order.createdAt)),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32.0),
-                color: const Color(0xffffffff),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x08000000),
-                    offset: Offset(0, 25),
-                    blurRadius: 40,
+      bottomNavigationBar: widget.isCheckIn
+          ? Container(
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.white,
+                    backgroundColor: Colors.red.shade900,
                   ),
-                ],
+                  child: Text(
+                    'Save Order',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () async {
+                      await performLazyTask(
+                        context,
+                        () {
+                          for (final item in order.items) {
+                            if (item.completed) {
+                              AppDB().markOrderItemAsComplete(item);
+                            }
+                          }
+
+                          return AppDB().markOrderAsComplete(order);
+                        },
+                      );
+
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
+            )
+          : null,
+      body: loading
+          ? CircularProgressIndicator()
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(15.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Panos Foods",style: TextStyle(
-                      fontWeight: FontWeight.bold,fontSize: 20
-                    ),),
-                  )),
-                  orderItem(),
-                  orderItem(),
-                  orderItem(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:25.0,vertical: 10),
-                    child: Divider(thickness: 1,color: Colors.black26,),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:20.0,vertical: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'TOTAL ',
-                          style: TextStyle(
-                            fontFamily: 'Poppins-SemiBold',
-                            fontSize: 15,
-                            color: const Color(0xff000000),
-                            height: 0.9333333333333333,
-                          ),
-                          textAlign: TextAlign.left,
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32.0),
+                      color: const Color(0xffffffff),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0x08000000),
+                          offset: Offset(0, 25),
+                          blurRadius: 40,
                         ),
-                        Text("\$ 54",style: TextStyle(
-                          fontSize: 17
-                        ),)
                       ],
                     ),
-                  )
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            order.distributor.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        )),
+                        ...order.items.map(orderItem).toList(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 25.0,
+                            vertical: 10,
+                          ),
+                          child: Divider(
+                            thickness: 1,
+                            color: Colors.black26,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'TOTAL ',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-SemiBold',
+                                  fontSize: 15,
+                                  color: const Color(0xff000000),
+                                  height: 0.9333333333333333,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                "\$ ${order.price}",
+                                style: TextStyle(fontSize: 17),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
-            SizedBox(height: 40),
-          ],
-        ),
-      ),
     );
   }
 
-  Widget orderItem(){
+  Widget orderItem(OrderItem item) {
+    if (widget.isCheckIn) {
+      return CheckboxListTile(
+        title: Text.rich(
+          TextSpan(
+            text: item.name,
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+            children: [
+              TextSpan(
+                text: '   (\$${item.price})',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+              )
+            ],
+          ),
+        ),
+        value: item.completed,
+        subtitle: Text('Quantity : ${item.quantity}'),
+        onChanged: (val) => setState(() => item.completed = val),
+      );
+    }
     return Padding(
-      padding: const EdgeInsets.only(left:20.0,right: 20,top: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -87,7 +180,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hot Dogs',
+                item.name,
                 style: TextStyle(
                   fontFamily: 'Poppins-SemiBold',
                   fontSize: 15,
@@ -96,9 +189,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ),
                 textAlign: TextAlign.left,
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               Text(
-                'Quantity : 4',
+                'Quantity : ${item.quantity}',
                 style: TextStyle(
                   fontFamily: 'Poppins-Regular',
                   fontSize: 12,
@@ -109,17 +202,35 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               )
             ],
           ),
-          Expanded(child: Container()),
-          Text(
-            '\$18',
-            style: TextStyle(
-              fontFamily: 'Poppins-SemiBold',
-              fontSize: 15,
-              color: Colors.grey,
-              height: 0.9333333333333333,
+          Spacer(),
+          Column(children: [
+            Text(
+              '\$${item.price}',
+              style: TextStyle(
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 15,
+                color: Colors.grey,
+                height: 0.9333333333333333,
+              ),
+              textAlign: TextAlign.left,
             ),
-            textAlign: TextAlign.left,
-          )
+            Container(
+              margin: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                  color: item.completed
+                      ? Theme.of(context).primaryColor
+                      : Colors.red.shade900,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Text(
+                item.completed ? 'Received' : 'Not Received',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ])
         ],
       ),
     );
