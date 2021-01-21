@@ -21,10 +21,12 @@ class ItemSearchView<T> extends StatefulWidget {
   final String emptyMessage;
   final String searchMessage;
   final String noConnectionMessage;
+  final Function(BuildContext, List<T>) header;
 
   ItemSearchView({
     this.onFetch,
     this.builder,
+    this.header,
     this.controller,
     this.allowSearch = true,
     this.emptyMessage = 'No Items Registered',
@@ -38,6 +40,7 @@ class ItemSearchView<T> extends StatefulWidget {
 
 class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
   // String search;
+  List<T> _data;
   Future<List<T>> _items;
 
   @override
@@ -48,10 +51,13 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
     _items = widget.onFetch();
   }
 
-  _reFetchProducts([String search]) {
+  _reFetchProducts([String search]) async {
     setState(() {
       _items = widget.onFetch(search);
     });
+
+    _data = await _items;
+    setState(() {});
   }
 
   @override
@@ -78,6 +84,8 @@ class _ItemSearchViewState<T> extends State<ItemSearchView<T>> {
           ),
         ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
+      if (_data != null && widget.header != null)
+        SliverToBoxAdapter(child: widget.header(context, _data),),
       SimpleFutureBuilder<List<T>>(
         future: _items,
         errorBuilder: (context, error) {
