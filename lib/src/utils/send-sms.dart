@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 textMe(String body) async {
   if (Platform.isAndroid) {
-    const uri = 'sms:+39 348 060 888?body=hello%20there';
+    final uri = 'sms:+39 348 060 888?body=$body';
     await launch(uri);
   } else if (Platform.isIOS) {
     // iOS
