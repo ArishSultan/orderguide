@@ -10,6 +10,7 @@ import 'package:moor/moor.dart';
 import 'package:orderguide/src/db/distributor_table.dart';
 import 'package:orderguide/src/models/item.dart';
 import 'package:orderguide/src/models/item_distribution.dart';
+import 'package:orderguide/src/models/item_purchase.dart';
 import 'package:orderguide/src/models/order.dart';
 import 'package:orderguide/src/models/order_item.dart';
 import 'package:path/path.dart';
@@ -167,6 +168,44 @@ class AppDB extends _$AppDB {
         .toList();
   }
 
+  Future<List<ItemPurchase>> getItemPurchases(
+    DateTime start,
+    DateTime end,
+    int itemId,
+  ) async {
+    final items = <ItemPurchase>[];
+    final orders = await (select(ordersTable)
+          ..where((tbl) =>
+              tbl.createdAt.isBiggerOrEqualValue(start) &
+              tbl.createdAt.isSmallerOrEqualValue(end) &
+              tbl.completed.equals(true))
+          ..orderBy([
+            (t) => OrderingTerm(
+                  expression: t.createdAt,
+                  mode: OrderingMode.desc,
+                )
+          ]))
+        .get();
+
+    for (final order in orders) {
+      final orderItems = await (select(orderItemsTable)
+            ..where((tbl) =>
+                tbl.orderId.equals(order.id) &
+                tbl.itemId.equals(itemId) &
+                tbl.completed.equals(true)))
+          .get();
+
+      if (orderItems.isNotEmpty)
+        items.add(ItemPurchase(
+          price: orderItems.fold(0, (value, element) => value + element.price),
+          time: order.createdAt,
+          qty: orderItems.length,
+        ));
+    }
+
+    return items;
+  }
+
   Future<Order> getOrder(int id) async {
     final data =
         await (select(ordersTable)..where((t) => t.id.equals(id))).getSingle();
@@ -180,7 +219,7 @@ class AppDB extends _$AppDB {
       createdAt: data.createdAt,
       distributor: dist,
       items: await getOrderItems(data.id),
-    );
+    )..count = data.count;
   }
 
   Future<int> markOrderItemAsComplete(OrderItem item) {
@@ -198,19 +237,45 @@ class AppDB extends _$AppDB {
     );
   }
 
-  Future<List<Order>> getAllOrders() async {
-    final data = await select(ordersTable).get();
+  Future<int> markOrderAsComplete(Order order) {
+    order.completed = true;
+    return (update(ordersTable)..where((tbl) => tbl.id.equals(order.id))).write(
+      OrdersTableCompanion(
+        id: Value(order.id),
+        price: Value(order.price),
+        count: Value(order.count),
+        createdAt: Value(order.createdAt),
+        completed: Value(order.completed),
+        distributor: Value(order.distributor.id),
+      ),
+    );
+  }
 
-    return data
-        .map(
-          (e) => Order(
-            id: e.id,
-            price: e.price,
-            createdAt: e.createdAt,
-            distributor: Distributor(id: e.distributor),
-          ),
-        )
-        .toList();
+  Future<List<Order>> getAllOrders({bool completed = false}) async {
+    final data = await (select(ordersTable)
+          ..where((tbl) => tbl.completed.equals(completed))
+          ..orderBy([
+            (t) => OrderingTerm(
+                  expression: t.createdAt,
+                  mode: OrderingMode.desc,
+                )
+          ]))
+        .get();
+    final _data = <Order>[];
+
+    for (final item in data) {
+      final dist = Distributor(id: item.distributor);
+      await dist.fill();
+
+      _data.add(Order(
+        id: item.id,
+        price: item.price,
+        createdAt: item.createdAt,
+        distributor: dist,
+      )..count = item.count);
+    }
+
+    return _data;
   }
 
   Future<int> updateItemDistribution(ItemDistribution entry) {
@@ -222,6 +287,8 @@ class AppDB extends _$AppDB {
     final id = await into(ordersTable).insert(OrdersTableCompanion(
       id: Value.absent(),
       price: Value(order.price),
+      count: Value(order.count),
+      completed: Value(order.completed),
       createdAt: Value(order.createdAt),
       distributor: Value(order.distributor.id),
     ));
