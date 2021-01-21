@@ -229,6 +229,7 @@ class AppDB extends _$AppDB {
     for (final item in order.items) {
       await into(orderItemsTable).insert(OrderItemsTableCompanion(
         id: Value.absent(),
+        itemId: Value(item.itemId),
         orderId: Value(id),
         name: Value(item.name),
         price: Value(item.price),
