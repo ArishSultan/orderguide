@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl:
   google_fonts:
   unicons:
   flutter_slidable:
