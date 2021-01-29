@@ -16,6 +16,7 @@ class AppTextField extends StatefulWidget {
   final Function(String) onSaved;
   final Function(String) onChanged;
   final TextInputType keyboardType;
+  final TextCapitalization capitalization;
   final AutovalidateMode autoValidateMode;
   final String Function(String) validator;
 
@@ -28,6 +29,7 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.validator,
     this.onChanged,
+    this.capitalization = TextCapitalization.characters,
     this.autoValidateMode = AutovalidateMode.disabled,
   }) : _isPassword = false;
 
@@ -41,7 +43,7 @@ class AppTextField extends StatefulWidget {
     this.validator,
     this.onChanged,
     this.autoValidateMode = AutovalidateMode.onUserInteraction,
-  }) : _isPassword = true;
+  }) : _isPassword = true, capitalization = null;
 
   @override
   _AppTextFieldState createState() => _AppTextFieldState();
@@ -71,6 +73,7 @@ class _AppTextFieldState extends State<AppTextField> {
         keyboardType: widget.keyboardType,
         initialValue: widget.initialValue,
         autoValidateMode: widget.autoValidateMode,
+        capitalization: widget.capitalization,
       );
     }
   }
@@ -87,6 +90,7 @@ class _TextField extends StatelessWidget {
   final Function(String) onSaved;
   final Function(String) onChanged;
   final TextInputType keyboardType;
+  final TextCapitalization capitalization;
   final AutovalidateMode autoValidateMode;
   final String Function(String) validator;
 
@@ -97,6 +101,7 @@ class _TextField extends StatelessWidget {
     this.obscure = false,
     this.onChanged,
     this.initialValue,
+    this.capitalization = TextCapitalization.characters,
     @required this.key,
     this.suffix,
     this.keyboardType,
@@ -115,6 +120,7 @@ class _TextField extends StatelessWidget {
       onChanged: onChanged,
       obscureText: obscure,
       keyboardType: keyboardType,
+      textCapitalization: TextCapitalization.characters,
       autovalidateMode: autoValidateMode,
       style: GoogleFonts.quicksand(color: Colors.black, fontSize: 14),
       validator: validator,
