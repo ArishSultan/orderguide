@@ -13,6 +13,7 @@ import 'package:orderguide/src/ui/widgets/fancy_tile.dart';
 import 'package:orderguide/src/utils/const.dart';
 import 'package:intl/intl.dart';
 import 'package:orderguide/src/utils/lazy_task.dart';
+import 'package:orderguide/src/utils/send-sms.dart';
 
 class GenerateOrderItems extends StatefulWidget {
   final Distributor distributor;
@@ -35,6 +36,10 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
   void initState() {
     super.initState();
 
+    getItems();
+  }
+
+  getItems() async {
     AppDB().getDistributorDistributions(widget.distributor).then((value) async {
       for (final item in value) await item.item.fill();
 
@@ -51,6 +56,16 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
             value + distributions[element].price * quantities[element],
       );
 
+  String _generateOrder(){
+    final buffer = StringBuffer();
+    buffer.writeln(
+        "Order for Bill's Place for ${DateFormat('dd MMM yyyy').format(orderDate)}");
+    quantities.forEach((key, value) {
+      buffer.writeln('${distributions[key].item.name} x $value');
+    });
+    return buffer.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,8 +74,14 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
         title: Text("Generate Order"),
         actions: [
           IconButton(
-            icon: Icon(Icons.alternate_email_outlined),
-            onPressed: () {},
+            icon: Image.asset(
+              EmailIcon,
+              color: Colors.white,
+              scale: 2,
+            ),
+            onPressed: () async {
+              await launchEmail(Uri.encodeFull(_generateOrder()),widget.distributor.email);
+            },
           ),
           IconButton(
             icon: Image.asset(
@@ -69,30 +90,21 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
               scale: 2,
             ),
             onPressed: () async {
-              final buffer = StringBuffer();
-
-              buffer.writeln(
-                  "Order for Bill's Place for ${DateFormat('dd MMM yyyy').format(orderDate)}");
-              quantities.forEach((key, value) {
-                buffer.writeln('${distributions[key].item.name} x $value');
-              });
-
-              print(buffer);
-              // await textMe(Uri.encodeFull(buffer.toString()));
+              await textMe(Uri.encodeFull(_generateOrder()),widget.distributor.phone);
             },
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(CupertinoIcons.add),
+      floatingActionButton: quantities.isNotEmpty ? FloatingActionButton.extended(
+        icon: Icon(CupertinoIcons.check_mark),
         label: Text(
-          'Place Order',
+          'Done',
           style: TextStyle(
             letterSpacing: 0,
             fontWeight: FontWeight.bold,
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
           performLazyTask(
             context,
             () async {
@@ -121,7 +133,7 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
           Navigator.of(context).pop();
           Navigator.of(context).pop();
         },
-      ),
+      ) : SizedBox(),
       bottomNavigationBar: Container(
         height: 115,
         color: Theme.of(context).primaryColor,
@@ -208,7 +220,7 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
                         ),
                         TableCell(
                           child: Text(
-                            '\$$total',
+                            '\$${total.toStringAsFixed(2)}',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -228,7 +240,10 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
                     ),
                   ),
                   icon: Icon(CupertinoIcons.add, size: 18),
-                  onPressed: () => AppNavigation.to(context, AddItems()),
+                  onPressed: () async {
+                   await AppNavigation.to(context, AddItems());
+                   getItems();
+                  },
                   label: Text(
                     'Add Item',
                     style: TextStyle(fontWeight: FontWeight.bold),

@@ -13,6 +13,7 @@ class ItemSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(centerTitle: true, title: Text("Items History")),
       body: ItemSearchView(
         controller: controller,
         onFetch: AppDB().getItems,

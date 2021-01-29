@@ -26,7 +26,7 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
 
   set date(DateTime date) {
     _rawDate = date;
-    _controller.text = DateFormat('dd MMM yyyy').format(date);
+    _controller.text = DateFormat('dd MMMMM yyyy').format(date);
   }
 
   @override

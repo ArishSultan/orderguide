@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:orderguide/src/ui/pages/distributors/distributors-list_page.dart';
@@ -20,9 +19,17 @@ abstract class AppNavigation {
   static Future<void> to(BuildContext context, Widget page,
       {bool replace = false}) {
     if (replace) {
-      return Navigator.of(context).pushReplacement(CupertinoPageRoute(
-        builder: (context) => page,
-      ));
+      try{
+        return Navigator.of(context).pushReplacement(CupertinoPageRoute(
+          builder: (context) => page,
+        ));
+      } catch (e){
+        print(e.toString());
+        return Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) => page,
+        ));
+      }
+
     } else {
       return Navigator.of(context).push(CupertinoPageRoute(
         builder: (context) => page,

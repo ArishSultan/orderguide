@@ -1,6 +1,6 @@
 class Validators {
   static String required(String value) =>
-      value.isNotEmpty ? null : 'This field must not be Empty';
+      value.isNotEmpty ? null : 'This field must not be empty';
 
   static String contact(String value) {
     if (value.length < 11) {

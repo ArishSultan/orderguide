@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:orderguide/src/db/item_table.dart';
 import 'package:orderguide/src/db/items-distribution_table.dart';
 import 'package:orderguide/src/db/order_items_table.dart';
 import 'package:orderguide/src/db/orders_table.dart';
+import 'package:orderguide/src/db/user_table.dart';
+import 'package:orderguide/src/models/backup.dart';
 import 'package:orderguide/src/models/distributor.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -13,8 +17,14 @@ import 'package:orderguide/src/models/item_distribution.dart';
 import 'package:orderguide/src/models/item_purchase.dart';
 import 'package:orderguide/src/models/order.dart';
 import 'package:orderguide/src/models/order_item.dart';
+import 'package:orderguide/src/models/user-model.dart';
+import 'package:orderguide/src/service/backup-service.dart';
+import 'package:orderguide/src/service/firebase-storage-service.dart';
+import 'package:orderguide/src/service/firebasefirestore-service.dart';
+import 'package:orderguide/src/service/http-service.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'db.g.dart';
 
@@ -23,7 +33,8 @@ part 'db.g.dart';
   ItemTable,
   ItemDistributionTable,
   OrdersTable,
-  OrderItemsTable
+  OrderItemsTable,
+  UserTable,
 ])
 class AppDB extends _$AppDB {
   static AppDB _instance;
@@ -49,6 +60,39 @@ class AppDB extends _$AppDB {
   @override
   int get schemaVersion => 1;
 
+  Future<File> dbFile() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(join(dbFolder.path, 'db.sqlite'));
+    return file;
+  }
+
+  Future pushBackup() async {
+  String url = await FirebaseStorageService.uploadBackup((await dbFile()).path);
+    await BackupService().updateFirestore(Backup(
+     url: url,
+     date: Timestamp.now(),
+     id:  'backup'
+   ));
+   SharedPreferences _prefs = await SharedPreferences.getInstance();
+   _prefs.setString('backupDate', DateTime.now().toIso8601String());
+  }
+
+  Future pullBackup() async {
+    Backup backup = await BackupService().getLatestBackup();
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    bool isFuseBurnt = _prefs.getString('backupDate') !=null;
+    if(isFuseBurnt){
+      DateTime lastBackup = DateTime.parse(_prefs.getString('backupDate'));
+      if(lastBackup.isBefore(backup.date.toDate())){
+        ResponseBody res = await HttpService().getOne(backup.url,(await dbFile()).path);
+        _prefs.setString('backupDate', backup.date.toDate().toIso8601String());
+      }
+    } else {
+      ResponseBody res = await HttpService().getOne(backup.url,(await dbFile()).path);
+    }
+  }
+
+
   Future<int> addDistributor(Distributor entry) {
     // '''
     // into(distributorTable).insert()
@@ -59,6 +103,18 @@ class AppDB extends _$AppDB {
 
   Future<ItemTableData> getItem(int id) {
     return (select(itemTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+  }
+
+  Future<UserTableData> getUser(int id) {
+    return (select(userTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+  }
+
+  Future<UserTableData> findUser(UserModel user) {
+    return (select(userTable)..where((tbl) => tbl.email.equals(user.email))).getSingle();
+  }
+
+  Future<int> addUser(UserModel entry) {
+    return into(userTable).insert(_createUserCompanion(entry));
   }
 
   Future<DistributorTableData> getDistributor(int id) {
@@ -73,6 +129,10 @@ class AppDB extends _$AppDB {
 
   Future<int> deleteDistributor(Distributor entry) {
     return (delete(distributorTable)..where((t) => t.id.equals(entry.id))).go();
+  }
+
+  Future<int> deleteDistributorOrders(Distributor entry) {
+    return (delete(ordersTable)..where((t) => t.distributor.equals(entry.id))).go();
   }
 
   Future<int> addDistribution(ItemDistribution entry) {
@@ -130,6 +190,13 @@ class AppDB extends _$AppDB {
           ),
         )
         .toList();
+  }
+
+  Future<int> getDistributorOrdersCount(Distributor distributor) async {
+    final data = await (select(ordersTable)
+      ..where((t) => t.distributor.equals(distributor.id)))
+        .get();
+    return data.length;
   }
 
   Future<List<ItemDistribution>> getItemDistributions(Item item) async {
@@ -204,6 +271,10 @@ class AppDB extends _$AppDB {
     }
 
     return items;
+  }
+  
+  Future clearOrders() async {
+    delete(ordersTable).go();
   }
 
   Future<Order> getOrder(int id) async {
@@ -341,6 +412,14 @@ class AppDB extends _$AppDB {
 
     return items.map((e) => Item(id: e.id, name: e.name)).toList();
   }
+}
+
+UserTableCompanion _createUserCompanion(UserModel user) {
+  return UserTableCompanion(
+    id: user.id != null ? Value(user.id) : Value.absent(),
+    email: Value(user.email),
+    password: Value(user.password),
+  );
 }
 
 ItemTableCompanion _createItemCompanion(Item distributor) {

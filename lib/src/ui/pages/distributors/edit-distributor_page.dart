@@ -73,7 +73,7 @@ class _EditDistributorState extends State<EditDistributor> {
                   initialValue: distributor.phone,
                   validator: Validators.multiple([
                     Validators.required,
-                    Validators.contact,
+                    // Validators.contact,
                   ]),
                   keyboardType: TextInputType.phone,
                   autoValidateMode: AutovalidateMode.onUserInteraction,

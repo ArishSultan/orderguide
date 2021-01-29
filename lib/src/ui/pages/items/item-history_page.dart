@@ -31,8 +31,10 @@ class _ItemHistoryPageState extends State<ItemHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text(widget.item.name),centerTitle: true,),
       body: ItemSearchView<ItemPurchase>(
           controller: controller,
+          emptyMessage: 'No Orders in Selected Time Span',
           header: (context, data) {
             final sum = data.fold(0, (value, element) => value + element.qty);
             return Padding(

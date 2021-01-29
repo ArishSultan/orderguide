@@ -45,6 +45,7 @@ class _ItemDistributionsListPageState extends State<ItemDistributionsListPage> {
           : ItemSearchView<ItemDistribution>(
               allowSearch: false,
               controller: controller,
+              emptyMessage: widget.item !=null ? 'No distributors added for this Item' : 'No items added for this Distributor',
               onFetch: ([str]) {
                 if (widget.item != null) {
                   return AppDB().getItemDistributions(widget.item);

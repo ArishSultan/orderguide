@@ -52,11 +52,11 @@ class DistributorTile extends StatelessWidget {
             onConfirmed: () async {
               final resp = await performLazyTask(context, () async {
                 final data = await AppDB().getDistributorDistributions(distributor);
-
                 if (data.isNotEmpty) {
                   return false;
                 } else {
                   await AppDB().deleteDistributor(distributor);
+                  await AppDB().deleteDistributorOrders(distributor);
                   return true;
                 }
               });
@@ -65,12 +65,11 @@ class DistributorTile extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Many Distributions are linked to this '
-                          'Distributor, delete them first'),
+                      title: Text('Many items contain cost for this '
+                          'Distributor, delete them first.Any order linked to this distributor will be removed too'),
                     )
                 );
               }
-
               return resp;
             },
           )

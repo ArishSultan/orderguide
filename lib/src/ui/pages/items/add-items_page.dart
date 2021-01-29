@@ -158,6 +158,7 @@ class _AddItemsState extends State<AddItems> {
           body: ItemSearchView<Distributor>(
             allowSearch: false,
             onFetch: AppDB().getDistributors,
+            emptyMessage: 'No Distributors Registered',
             builder: (context, item, _) {
               var status = false;
               ItemDistribution distribution;
@@ -205,7 +206,6 @@ class _AddItemsState extends State<AddItems> {
                         price: distribution.price,
                       ),
                     );
-
                     setState(() => distribution.price = price);
                   },
                 ),

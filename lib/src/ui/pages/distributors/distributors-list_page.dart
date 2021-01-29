@@ -24,6 +24,8 @@ class DistributorsListPage extends StatelessWidget {
       body: ItemSearchView<Distributor>(
         controller: controller,
         onFetch: AppDB().getDistributors,
+        searchMessage: 'Search Distributors',
+        emptyMessage: 'No Distributors Registered',
         builder: (context, item, _) => DistributorTile(
           item,
           dismissible: true,

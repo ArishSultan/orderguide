@@ -1,9 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:orderguide/src/base/db.dart';
+import 'package:orderguide/src/base/db.dart';
+import 'package:orderguide/src/models/user-model.dart';
+import 'package:orderguide/src/utils/lazy_task.dart';
 import 'package:orderguide/src/base/keys.dart';
 import 'package:orderguide/src/base/nav.dart';
 import 'package:orderguide/src/ui/pages/auth/forgot-password-dialog.dart';
 import 'package:orderguide/src/ui/pages/homepage.dart';
 import 'package:orderguide/src/ui/widgets/text_field.dart';
 import 'package:orderguide/src/utils/validators.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unicons/unicons.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,11 +21,23 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _key = GlobalKey<FormState>();
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+  SharedPreferences _preferences;
   var autoValidate = AutovalidateMode.disabled;
   bool rememberMe = true;
+  final FirebaseAuth _auth=FirebaseAuth.instance;
+  UserModel _data = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((value) => _preferences = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Center(
         child: Form(
           key: _key,
@@ -62,7 +80,7 @@ class _SignInPageState extends State<SignInPage> {
                   icon: UniconsLine.user,
                   placeholder: "Email",
                   validator: Validators.requiredEmail,
-                  //  onSaved: (email) => _data.username = email,
+                   onSaved: (email) => _data.email = email,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Padding(
@@ -73,14 +91,16 @@ class _SignInPageState extends State<SignInPage> {
                     icon: UniconsLine.lock_open_alt,
                     validator: Validators.requiredPassword,
                     autoValidateMode: autoValidate,
-                    //  onSaved: (password) => _data.password = password,
+                     onSaved: (password) => _data.password = password,
                   ),
                 ),
                 Row(
                   children: [
                     Checkbox(value: rememberMe,
                         onChanged: (bool val){
-
+                      setState(() {
+                        rememberMe = val;
+                      });
                     }),
                     Text("Remember me?")
                   ],
@@ -89,8 +109,34 @@ class _SignInPageState extends State<SignInPage> {
                   padding: const EdgeInsets.only( bottom: 15),
                   child: TextButton(
                     key: Keys.signInButton,
-                    onPressed: () {
-                      AppNavigation.to(context, InventoryHomePage(),replace: true);
+                    onPressed: () async {
+                      if(_key.currentState.validate()){
+                        _key.currentState.save();
+                        await performLazyTask(context, () async {
+                          try{
+                            UserCredential userCredential=await _auth.signInWithEmailAndPassword(email: _data.email.trim(), password: _data.password);
+                            User user= userCredential.user;
+                            await _preferences.setBool('rememberMe', rememberMe);
+                            await _preferences.setString('lastLogin', DateTime.now().toIso8601String());
+
+                            AppNavigation.to(context, InventoryHomePage(),replace: true);
+                          }
+                          on FirebaseAuthException catch(error) {
+                            Navigator.pop(context);
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              content: Text(error.message),
+                              duration: Duration(seconds: 2),
+                            ));
+                            return;
+                          }
+                        });
+                      } else{
+                        setState(() {
+                          autoValidate = AutovalidateMode.always;
+                        });
+                      }
+
                     },
                     style: TextButton.styleFrom(
                         shape: StadiumBorder(),
@@ -197,3 +243,6 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
+
+//For creating temporary user
+// print(await AppDB().addUser(UserModel(email: 'haroonashrafawan@gmail.com',password: '12345678')));

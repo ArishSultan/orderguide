@@ -30,6 +30,7 @@ class _HistoryListingState extends State<HistoryListing> {
         allowSearch: false,
         onFetch: ([str]) => AppDB().getAllOrders(completed: widget.completed),
         controller: controller,
+        emptyMessage: widget.completed ? 'No Order History' : 'No Order In Check-in',
         builder: (context, order, _) {
           return Padding(
             padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
