@@ -29,7 +29,7 @@ class _ItemsListState extends State<ItemsList> {
         controller: controller,
         onFetch: AppDB().getItems,
         builder: (context, item, _) {
-          return ItemTile(item);
+          return ItemTile(item, () => controller.refresh());
         },
       ),
       floatingActionButton: FloatingActionButton(

@@ -56,6 +56,8 @@ class _ItemDistributionsListPageState extends State<ItemDistributionsListPage> {
               },
               builder: (context, item, _) {
                 return SimpleFutureBuilder<void>(
+                  unknownBuilder: (context) => Container(),
+                  loadingBuilder: (context, _) => Container(),
                   future:
                       Future.wait([item.item.fill(), item.distributor.fill()]),
                   builder: (context, a) => Padding(

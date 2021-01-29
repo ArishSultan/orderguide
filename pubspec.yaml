@@ -26,6 +26,7 @@ dependencies:
   intl:
   google_fonts:
   unicons:
+  flutter_email_sender: 4.0.0
   flutter_slidable:
   cloud_firestore:
   firebase_auth:

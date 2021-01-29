@@ -8,8 +8,6 @@ import 'package:orderguide/src/ui/views/item_search_view.dart';
 import 'package:orderguide/src/ui/widgets/distributor_tile.dart';
 import 'package:orderguide/src/ui/pages/distributors/edit-distributor_page.dart';
 
-import 'distributor-items-list_page.dart';
-
 class DistributorsListPage extends StatelessWidget {
   final controller = ItemSearchViewController();
 

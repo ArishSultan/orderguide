@@ -58,7 +58,19 @@ class AppDB extends _$AppDB {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration =>
+      MigrationStrategy(onCreate: (Migrator m) {
+        return m.createAll();
+      }, onUpgrade: (Migrator m, int from, int to) async {
+        if (from == 1) {
+          // we added the dueDate property in the change from version 1
+          // await m.addColumn(todos, todos.dueDate);
+          await m.alterTable(TableMigration(distributorTable));
+        }
+      });
 
   Future<File> dbFile() async {
     final dbFolder = await getApplicationDocumentsDirectory();
@@ -67,31 +79,30 @@ class AppDB extends _$AppDB {
   }
 
   Future pushBackup() async {
-  String url = await FirebaseStorageService.uploadBackup((await dbFile()).path);
-    await BackupService().updateFirestore(Backup(
-     url: url,
-     date: Timestamp.now(),
-     id:  'backup'
-   ));
-   SharedPreferences _prefs = await SharedPreferences.getInstance();
-   _prefs.setString('backupDate', DateTime.now().toIso8601String());
+    String url =
+    await FirebaseStorageService.uploadBackup((await dbFile()).path);
+    await BackupService()
+        .updateFirestore(Backup(url: url, date: Timestamp.now(), id: 'backup'));
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.setString('backupDate', DateTime.now().toIso8601String());
   }
 
   Future pullBackup() async {
     Backup backup = await BackupService().getLatestBackup();
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    bool isFuseBurnt = _prefs.getString('backupDate') !=null;
-    if(isFuseBurnt){
+    bool isFuseBurnt = _prefs.getString('backupDate') != null;
+    if (isFuseBurnt) {
       DateTime lastBackup = DateTime.parse(_prefs.getString('backupDate'));
-      if(lastBackup.isBefore(backup.date.toDate())){
-        ResponseBody res = await HttpService().getOne(backup.url,(await dbFile()).path);
+      if (lastBackup.isBefore(backup.date.toDate())) {
+        ResponseBody res =
+        await HttpService().getOne(backup.url, (await dbFile()).path);
         _prefs.setString('backupDate', backup.date.toDate().toIso8601String());
       }
     } else {
-      ResponseBody res = await HttpService().getOne(backup.url,(await dbFile()).path);
+      ResponseBody res =
+      await HttpService().getOne(backup.url, (await dbFile()).path);
     }
   }
-
 
   Future<int> addDistributor(Distributor entry) {
     // '''
@@ -102,15 +113,19 @@ class AppDB extends _$AppDB {
   }
 
   Future<ItemTableData> getItem(int id) {
-    return (select(itemTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+    return (select(itemTable)
+      ..where((tbl) => tbl.id.equals(id))).getSingle();
   }
 
   Future<UserTableData> getUser(int id) {
-    return (select(userTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+    return (select(userTable)
+      ..where((tbl) => tbl.id.equals(id))).getSingle();
   }
 
   Future<UserTableData> findUser(UserModel user) {
-    return (select(userTable)..where((tbl) => tbl.email.equals(user.email))).getSingle();
+    return (select(userTable)
+      ..where((tbl) => tbl.email.equals(user.email)))
+        .getSingle();
   }
 
   Future<int> addUser(UserModel entry) {
@@ -118,21 +133,26 @@ class AppDB extends _$AppDB {
   }
 
   Future<DistributorTableData> getDistributor(int id) {
-    return (select(distributorTable)..where((tbl) => tbl.id.equals(id)))
+    return (select(distributorTable)
+      ..where((tbl) => tbl.id.equals(id)))
         .getSingle();
   }
 
   Future<int> updateDistributor(Distributor entry) {
-    return (update(distributorTable)..where((t) => t.id.equals(entry.id)))
+    return (update(distributorTable)
+      ..where((t) => t.id.equals(entry.id)))
         .write(_createDistributorCompanion(entry));
   }
 
   Future<int> deleteDistributor(Distributor entry) {
-    return (delete(distributorTable)..where((t) => t.id.equals(entry.id))).go();
+    return (delete(distributorTable)
+      ..where((t) => t.id.equals(entry.id))).go();
   }
 
   Future<int> deleteDistributorOrders(Distributor entry) {
-    return (delete(ordersTable)..where((t) => t.distributor.equals(entry.id))).go();
+    return (delete(ordersTable)
+      ..where((t) => t.distributor.equals(entry.id)))
+        .go();
   }
 
   Future<int> addDistribution(ItemDistribution entry) {
@@ -141,12 +161,14 @@ class AppDB extends _$AppDB {
   }
 
   Future<int> updateDistribution(ItemDistribution entry) {
-    return (update(itemDistributionTable)..where((t) => t.id.equals(entry.id)))
+    return (update(itemDistributionTable)
+      ..where((t) => t.id.equals(entry.id)))
         .write(_createItemDistributionCompanion(entry));
   }
 
   Future<int> deleteDistribution(ItemDistribution entry) {
-    return (delete(itemDistributionTable)..where((t) => t.id.equals(entry.id)))
+    return (delete(itemDistributionTable)
+      ..where((t) => t.id.equals(entry.id)))
         .go();
   }
 
@@ -155,17 +177,19 @@ class AppDB extends _$AppDB {
   }
 
   Future<int> deleteItem(Item entry) {
-    return (delete(itemTable)..where((t) => t.id.equals(entry.id))).go();
+    return (delete(itemTable)
+      ..where((t) => t.id.equals(entry.id))).go();
   }
 
   Future<int> deleteItemDistribution(ItemDistribution distribution) {
     return (delete(itemDistributionTable)
-          ..where((t) => t.id.equals(distribution.id)))
+      ..where((t) => t.id.equals(distribution.id)))
         .go();
   }
 
   Future<int> updateItem(Item entry) {
-    return (update(itemTable)..where((t) => t.id.equals(entry.id)))
+    return (update(itemTable)
+      ..where((t) => t.id.equals(entry.id)))
         .write(_createItemCompanion(entry));
   }
 
@@ -177,18 +201,19 @@ class AppDB extends _$AppDB {
   Future<List<ItemDistribution>> getDistributorDistributions(
       Distributor distributor) async {
     final data = await (select(itemDistributionTable)
-          ..where((t) => t.distributor.equals(distributor.id)))
+      ..where((t) => t.distributor.equals(distributor.id)))
         .get();
 
     return data
         .map(
-          (e) => ItemDistribution(
+          (e) =>
+          ItemDistribution(
             id: e.id,
             price: e.price,
             item: Item(id: e.item),
             distributor: Distributor(id: e.distributor),
           ),
-        )
+    )
         .toList();
   }
 
@@ -201,29 +226,31 @@ class AppDB extends _$AppDB {
 
   Future<List<ItemDistribution>> getItemDistributions(Item item) async {
     final data = await (select(itemDistributionTable)
-          ..where((t) => t.item.equals(item.id)))
+      ..where((t) => t.item.equals(item.id)))
         .get();
 
     return data
         .map(
-          (e) => ItemDistribution(
+          (e) =>
+          ItemDistribution(
             id: e.id,
             price: e.price,
             item: Item(id: e.item),
             distributor: Distributor(id: e.distributor),
           ),
-        )
+    )
         .toList();
   }
 
   Future<List<OrderItem>> getOrderItems(int orderId) async {
     final items = await (select(orderItemsTable)
-          ..where((tbl) => tbl.orderId.equals(orderId)))
+      ..where((tbl) => tbl.orderId.equals(orderId)))
         .get();
 
     return items
         .map(
-          (e) => OrderItem(
+          (e) =>
+          OrderItem(
             id: e.id,
             name: e.name,
             price: e.price,
@@ -231,35 +258,34 @@ class AppDB extends _$AppDB {
             quantity: e.quantity,
             completed: e.completed,
           ),
-        )
+    )
         .toList();
   }
 
-  Future<List<ItemPurchase>> getItemPurchases(
-    DateTime start,
-    DateTime end,
-    int itemId,
-  ) async {
+  Future<List<ItemPurchase>> getItemPurchases(DateTime start,
+      DateTime end,
+      int itemId,) async {
     final items = <ItemPurchase>[];
     final orders = await (select(ordersTable)
-          ..where((tbl) =>
-              tbl.createdAt.isBiggerOrEqualValue(start) &
-              tbl.createdAt.isSmallerOrEqualValue(end) &
-              tbl.completed.equals(true))
-          ..orderBy([
-            (t) => OrderingTerm(
-                  expression: t.createdAt,
-                  mode: OrderingMode.desc,
-                )
-          ]))
+      ..where((tbl) =>
+      tbl.createdAt.isBiggerOrEqualValue(start) &
+      tbl.createdAt.isSmallerOrEqualValue(end) &
+      tbl.completed.equals(true))
+      ..orderBy([
+            (t) =>
+            OrderingTerm(
+              expression: t.createdAt,
+              mode: OrderingMode.desc,
+            )
+      ]))
         .get();
 
     for (final order in orders) {
       final orderItems = await (select(orderItemsTable)
-            ..where((tbl) =>
-                tbl.orderId.equals(order.id) &
-                tbl.itemId.equals(itemId) &
-                tbl.completed.equals(true)))
+        ..where((tbl) =>
+        tbl.orderId.equals(order.id) &
+        tbl.itemId.equals(itemId) &
+        tbl.completed.equals(true)))
           .get();
 
       if (orderItems.isNotEmpty)
@@ -272,14 +298,15 @@ class AppDB extends _$AppDB {
 
     return items;
   }
-  
+
   Future clearOrders() async {
     delete(ordersTable).go();
   }
 
   Future<Order> getOrder(int id) async {
     final data =
-        await (select(ordersTable)..where((t) => t.id.equals(id))).getSingle();
+    await (select(ordersTable)
+      ..where((t) => t.id.equals(id))).getSingle();
 
     final dist = Distributor(id: data.distributor);
     await dist.fill();
@@ -290,12 +317,14 @@ class AppDB extends _$AppDB {
       createdAt: data.createdAt,
       distributor: dist,
       items: await getOrderItems(data.id),
-    )..count = data.count;
+    )
+      ..count = data.count;
   }
 
   Future<int> markOrderItemAsComplete(OrderItem item) {
     item.completed = true;
-    return (update(orderItemsTable)..where((tbl) => tbl.id.equals(item.id)))
+    return (update(orderItemsTable)
+      ..where((tbl) => tbl.id.equals(item.id)))
         .write(
       OrderItemsTableCompanion(
         id: Value(item.id),
@@ -310,7 +339,8 @@ class AppDB extends _$AppDB {
 
   Future<int> markOrderAsComplete(Order order) {
     order.completed = true;
-    return (update(ordersTable)..where((tbl) => tbl.id.equals(order.id))).write(
+    return (update(ordersTable)
+      ..where((tbl) => tbl.id.equals(order.id))).write(
       OrdersTableCompanion(
         id: Value(order.id),
         price: Value(order.price),
@@ -324,13 +354,14 @@ class AppDB extends _$AppDB {
 
   Future<List<Order>> getAllOrders({bool completed = false}) async {
     final data = await (select(ordersTable)
-          ..where((tbl) => tbl.completed.equals(completed))
-          ..orderBy([
-            (t) => OrderingTerm(
-                  expression: t.createdAt,
-                  mode: OrderingMode.desc,
-                )
-          ]))
+      ..where((tbl) => tbl.completed.equals(completed))
+      ..orderBy([
+            (t) =>
+            OrderingTerm(
+              expression: t.createdAt,
+              mode: OrderingMode.desc,
+            )
+      ]))
         .get();
     final _data = <Order>[];
 
@@ -343,7 +374,8 @@ class AppDB extends _$AppDB {
         price: item.price,
         createdAt: item.createdAt,
         distributor: dist,
-      )..count = item.count);
+      )
+        ..count = item.count);
     }
 
     return _data;
@@ -390,24 +422,29 @@ class AppDB extends _$AppDB {
     }
     return distributors
         .map(
-          (e) => Distributor(
+          (e) =>
+          Distributor(
             id: e.id,
             name: e.name,
             email: e.email,
             phone: e.phone,
             salesmanName: e.salesmanName,
           ),
-        )
+    )
         .toList();
   }
 
   Future<List<Item>> getItems([String name]) async {
     List<ItemTableData> items;
     if (name?.isNotEmpty != null) {
-      final query = select(itemTable)..where((tbl) => tbl.name.like('%$name%'));
+      final query = select(itemTable)
+        ..where((tbl) => tbl.name.like('%$name%'))
+        ..orderBy([(tbl) => OrderingTerm(expression: tbl.name)]);
       items = await query.get();
     } else {
-      items = await select(itemTable).get();
+      items = await (select(itemTable)
+        ..orderBy([(tbl) => OrderingTerm(expression: tbl.name)])
+      ).get();
     }
 
     return items.map((e) => Item(id: e.id, name: e.name)).toList();

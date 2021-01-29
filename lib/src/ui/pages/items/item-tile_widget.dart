@@ -12,8 +12,9 @@ import 'package:orderguide/src/utils/lazy_task.dart';
 
 class ItemTile extends StatelessWidget {
   final Item item;
+  final VoidCallback onChanged;
 
-  ItemTile(this.item);
+  ItemTile(this.item, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,8 @@ class ItemTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
       child: DismissibleTile(
         onEdit: () async {
-          AppNavigation.to(context, AddItems(item));
+          await AppNavigation.to(context, AddItems(item));
+          onChanged?.call();
           return false;
         },
         onRemove: () => showConfirmation(
@@ -37,6 +39,7 @@ class ItemTile extends StatelessWidget {
                 return false;
               } else {
                 await AppDB().deleteItem(item);
+                onChanged?.call();
                 return true;
               }
             });
