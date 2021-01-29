@@ -40,7 +40,6 @@ Future<T> showConfirmation<T>(
     throw 'No Dialog Builder was provided';
   }
 
-  print(result);
   if (result == true) {
     return onConfirmed();
   } else {

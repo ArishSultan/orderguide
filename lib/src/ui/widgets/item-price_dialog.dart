@@ -45,7 +45,7 @@ class ItemPriceDialogState extends State<ItemPriceDialog> {
                 initialValue: _price,
                 icon: UniconsLine.dollar_alt,
                 placeholder: 'Cost',
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 onSaved: (value) => _price = value,
               ),
             ),
