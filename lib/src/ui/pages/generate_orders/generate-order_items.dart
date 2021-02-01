@@ -102,7 +102,6 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
               ),
               onPressed: () async {
                 await launchEmail(_generateOrder(false), widget.distributor.email);
-                isSent = true;
               },
             ),
             IconButton(
@@ -113,8 +112,7 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
               ),
               onPressed: () async {
                 await textMe(
-                    Uri.encodeFull(_generateOrder()), widget.distributor.phone);
-                isSent = true;
+                    _generateOrder(), widget.distributor.phone);
               },
             ),
           ],
@@ -154,6 +152,7 @@ class _GenerateOrderItemsState extends State<GenerateOrderItems> {
                       AppDB().placeOrder(order);
                     },
                   );
+                  isSent = true;
 
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();

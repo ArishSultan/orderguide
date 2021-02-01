@@ -81,6 +81,7 @@ class _SignInPageState extends State<SignInPage> {
                   placeholder: "Email",
                   validator: Validators.requiredEmail,
                    onSaved: (email) => _data.email = email,
+                  capitalization: TextCapitalization.none,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Padding(
