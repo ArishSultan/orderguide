@@ -292,7 +292,7 @@ class AppDB extends _$AppDB {
         items.add(ItemPurchase(
           price: orderItems.fold(0, (value, element) => value + element.price),
           time: order.createdAt,
-          qty: orderItems.length,
+          qty: orderItems.fold(0, (previousValue, element) => previousValue + element.quantity),
         ));
     }
 
@@ -392,14 +392,14 @@ class AppDB extends _$AppDB {
       price: Value(order.price),
       count: Value(order.count),
       completed: Value(order.completed),
-      createdAt: Value(order.createdAt),
+      createdAt: Value(DateTime.now()),
       distributor: Value(order.distributor.id),
     ));
 
     for (final item in order.items) {
       await into(orderItemsTable).insert(OrderItemsTableCompanion(
         id: Value.absent(),
-        itemId: Value(item.itemId),
+        itemId: Value(item.itemId ?? item.id),
         orderId: Value(id),
         name: Value(item.name),
         price: Value(item.price),
@@ -408,7 +408,7 @@ class AppDB extends _$AppDB {
       ));
     }
 
-    return 0;
+    return id;
   }
 
   Future<List<Distributor>> getDistributors([String name]) async {

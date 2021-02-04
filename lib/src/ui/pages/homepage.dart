@@ -46,24 +46,34 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           child: Row(
             children: [
               IconButton(
-                  tooltip: 'Pull Backup',
-                  icon: Icon(CupertinoIcons.arrow_down_circle_fill), onPressed: () async{
-                    return showConfirmation(context,onConfirmed: () async {
-                      await performLazyTask(context, () async{
-                       await AppDB().pullBackup();
-                       scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Backup restored successfully!")));
+                tooltip: 'Pull Backup',
+                icon: Icon(CupertinoIcons.arrow_down_circle_fill),
+                onPressed: () async {
+                  return showConfirmation(
+                    context,
+                    onConfirmed: () async {
+                      await performLazyTask(context, () async {
+                        await AppDB().pullBackup();
+                        scaffoldKey.currentState.showSnackBar(SnackBar(
+                            content: Text("Backup restored successfully!")));
                       });
-                    });
-              }),
+                    },
+                  );
+                },
+              ),
               IconButton(
-                  tooltip: 'Push Backup',
-                  icon: Icon(CupertinoIcons.cloud_upload_fill), onPressed: (){
-                return showConfirmation(context,onConfirmed: () async {
-                  await performLazyTask(context, () async{
-                    await AppDB().pushBackup();
-                    scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Backup pushed successfully!")));
+                tooltip: 'Push Backup',
+                icon: Icon(CupertinoIcons.cloud_upload_fill),
+                onPressed: () {
+                  return showConfirmation(context, onConfirmed: () async {
+                    await performLazyTask(context, () async {
+                      await AppDB().pushBackup();
+                      scaffoldKey.currentState.showSnackBar(SnackBar(
+                          content: Text("Backup pushed successfully!")));
+                    });
                   });
-                });}),
+                },
+              ),
               Spacer(),
               Align(
                 alignment: Alignment(0, .6),
@@ -74,10 +84,11 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
               ),
               Spacer(),
               IconButton(
-                tooltip: 'Sign out',
-                  icon: Icon(Icons.exit_to_app), onPressed: (){
-                context.read<AuthenticationService>().signOut();
-               })
+                  tooltip: 'Sign out',
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    context.read<AuthenticationService>().signOut();
+                  })
             ],
           ),
         ),
@@ -89,9 +100,11 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SimpleFutureBuilder(
-              loadingBuilder: (context,_)=> SizedBox(height: 18,),
+              loadingBuilder: (context, _) => SizedBox(
+                height: 18,
+              ),
               future: BackupService().getLatestBackup(),
-              builder: (context,Backup backup){
+              builder: (context, Backup backup) {
                 return Row(
                   children: [
                     Text("Latest Backup on Cloud: "),
@@ -101,19 +114,27 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
               },
             ),
             SimpleFutureBuilder(
-              loadingBuilder: (context,_)=> SizedBox(height: 15,),
+              loadingBuilder: (context, _) => SizedBox(
+                height: 15,
+              ),
               future: SharedPreferences.getInstance(),
-              builder: (context,SharedPreferences prefs){
-                DateTime date = prefs.getString('backupDate') !=null ? DateTime.tryParse(prefs.getString('backupDate')) : null;
-                return date == null ? SizedBox(): Row(
-                  children: [
-                    Text("Latest Backup on Phone: "),
-                    Text(DateFormat('dd MMM y').format(date)),
-                  ],
-                );
+              builder: (context, SharedPreferences prefs) {
+                DateTime date = prefs.getString('backupDate') != null
+                    ? DateTime.tryParse(prefs.getString('backupDate'))
+                    : null;
+                return date == null
+                    ? SizedBox()
+                    : Row(
+                        children: [
+                          Text("Latest Backup on Phone: "),
+                          Text(DateFormat('dd MMM y').format(date)),
+                        ],
+                      );
               },
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             HomeTile(
               image: ItemsIcon,
               title: 'Items',

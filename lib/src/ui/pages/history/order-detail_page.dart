@@ -3,7 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:orderguide/src/base/db.dart';
 import 'package:orderguide/src/models/order.dart';
 import 'package:orderguide/src/models/order_item.dart';
+import 'package:orderguide/src/ui/widgets/confirmation.dart';
+import 'package:orderguide/src/utils/const.dart';
 import 'package:orderguide/src/utils/lazy_task.dart';
+import 'package:orderguide/src/utils/send-sms.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final Order order;
@@ -31,45 +34,92 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     });
   }
 
+  String _generateOrder([bool useHtml = false]) {
+    final buffer = StringBuffer();
+    final dateTime = DateFormat('dd MMM yyyy').format(order.createdAt);
+    if (useHtml) {
+      buffer.write("<span>Order for Bill's Place for $dateTime</span><br><br>");
+    } else {
+      buffer.writeln("Order for Bill's Place for $dateTime\n");
+    }
+    order.items.forEach((value) {
+      if (useHtml) {
+        buffer.write(
+          '<span>${value.name} x ${value.quantity}</span><br>',
+        );
+      } else {
+        buffer.writeln('${value.name} x ${value.quantity}');
+      }
+    });
+    return buffer.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(DateFormat('dd MMM y').format(widget.order.createdAt)),
+        actions: [
+          IconButton(
+            icon: Image.asset(
+              EmailIcon,
+              color: Colors.white,
+              scale: 2,
+            ),
+            onPressed: () async {
+              await launchEmail(_generateOrder(false), order.distributor.email);
+            },
+          ),
+          IconButton(
+            icon: Image.asset(
+              SMSIcon,
+              color: Colors.white,
+              scale: 2,
+            ),
+            onPressed: () async {
+              await textMe(_generateOrder(), order.distributor.phone);
+            },
+          ),
+        ],
       ),
-      bottomNavigationBar: widget.isCheckIn
-          ? Container(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    backgroundColor: Colors.red.shade900,
-                  ),
-                  child: Text(
-                    'Save Order',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () async {
-                      await performLazyTask(
-                        context,
-                        () {
-                          for (final item in order.items) {
-                            if (item.completed) {
-                              AppDB().markOrderItemAsComplete(item);
-                            }
-                          }
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(15),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            primary: Colors.white,
+            backgroundColor: Colors.red.shade900,
+          ),
+          child: Text(
+            widget.isCheckIn ? 'Save Order' : 'Reorder',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onPressed: () async {
+            if (widget.isCheckIn) {
+              await performLazyTask(
+                context,
+                    () {
+                  for (final item in order.items) {
+                    if (item.completed) {
+                      AppDB().markOrderItemAsComplete(item);
+                    }
+                  }
 
-                          return AppDB().markOrderAsComplete(order);
-                        },
-                      );
+                  return AppDB().markOrderAsComplete(order);
+                },
+              );
 
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            )
-          : null,
+              Navigator.of(context).pop();
+            } else {
+              var res;
+              final result = await showConfirmation(context, onConfirmed: () => true);
+              if (result) res = await AppDB().placeOrder(order..completed = false);
+
+              print('ID BEFORE ${order.id}');
+              print('ID AFTER $res');
+            }
+          },
+        ),
+      ),
       body: loading
           ? CircularProgressIndicator()
           : SingleChildScrollView(
